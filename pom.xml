@@ -14,4 +14,8 @@
 		<java.version>17</java.version>
 	</properties>
 
+	<modules>
+		<module>calculator</module>
+	</modules>
+
 </project>
