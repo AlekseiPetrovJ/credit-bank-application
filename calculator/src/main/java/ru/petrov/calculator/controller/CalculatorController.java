@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.petrov.calculator.dto.LoanOfferDto;
 import ru.petrov.calculator.dto.LoanStatementRequestDto;
 import ru.petrov.calculator.service.CalculatorService;
 import ru.petrov.calculator.util.CheckBindingResult;
 import ru.petrov.calculator.util.validator.LoanStatementRequestDtoValidator;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/calculator", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -27,7 +30,7 @@ public class CalculatorController {
     }
 
     @PostMapping("/offers")
-    public ResponseEntity<?> offers(@RequestBody @Valid LoanStatementRequestDto requestDto, BindingResult result){
+    public ResponseEntity<List<LoanOfferDto>> offers(@RequestBody @Valid LoanStatementRequestDto requestDto, BindingResult result){
 
         loanStatementRequestDtoValidator.validate(requestDto, result);
         new CheckBindingResult().check(result);
