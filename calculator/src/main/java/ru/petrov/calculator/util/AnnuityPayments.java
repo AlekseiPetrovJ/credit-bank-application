@@ -19,7 +19,7 @@ public class AnnuityPayments {
                 К = (М * (1 + М) ^ S) / ((1 + М) ^ S — 1)
         где М — месячная процентная ставка по кредиту,
                 S — срок кредита в месяцах.*/
-        
+
         BigDecimal annuityFactor = (monthsRate.multiply(auxiliaryFactor))
                 .divide(auxiliaryFactor.subtract(BigDecimal.ONE), scale, roundingMode);
         return (amount.multiply(annuityFactor));
