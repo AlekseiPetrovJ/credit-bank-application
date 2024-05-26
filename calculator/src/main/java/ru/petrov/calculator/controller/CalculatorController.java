@@ -2,6 +2,7 @@ package ru.petrov.calculator.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,13 +15,13 @@ import ru.petrov.calculator.util.CheckBindingResult;
 import ru.petrov.calculator.util.validator.LoanStatementRequestDtoValidator;
 
 @RestController
-@RequestMapping(path = "/calculator")
-public class Calculator {
+@RequestMapping(path = "/calculator", produces = MediaType.APPLICATION_JSON_VALUE)
+public class CalculatorController {
     private final CalculatorService calculatorService;
     private final LoanStatementRequestDtoValidator loanStatementRequestDtoValidator;
 
     @Autowired
-    public Calculator(CalculatorService calculatorService, LoanStatementRequestDtoValidator loanStatementRequestDtoValidator) {
+    public CalculatorController(CalculatorService calculatorService, LoanStatementRequestDtoValidator loanStatementRequestDtoValidator) {
         this.calculatorService = calculatorService;
         this.loanStatementRequestDtoValidator = loanStatementRequestDtoValidator;
     }
