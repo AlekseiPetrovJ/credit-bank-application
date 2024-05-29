@@ -1,28 +1,23 @@
 package ru.petrov.calculator.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.petrov.calculator.config.RoundingProps;
 import ru.petrov.calculator.config.ScoringProps;
-import ru.petrov.calculator.dto.LoanOfferDto;
-import ru.petrov.calculator.dto.LoanStatementRequestDto;
+import ru.petrov.calculator.dto.*;
+import ru.petrov.calculator.util.AnnuityPayments;
+import ru.petrov.calculator.util.Insurance;
+import ru.petrov.calculator.util.Rate;
 
 import java.math.BigDecimal;
 import java.util.*;
 
-import static ru.petrov.calculator.util.AnnuityPayments.getAnnuityMonthlyPayment;
-import static ru.petrov.calculator.util.AnnuityPayments.getAnnuityTotalPayment;
-
 @Service
+@RequiredArgsConstructor
 public class CalculatorService {
     private final ScoringProps scoringProps;
-    private final RoundingProps roundingProps;
+    private final Insurance insurance;
+    private final AnnuityPayments payments;
 
-    @Autowired
-    public CalculatorService(ScoringProps scoringProps, RoundingProps roundingProps) {
-        this.scoringProps = scoringProps;
-        this.roundingProps = roundingProps;
-    }
 
     /**
      * в зависимости от страховых услуг увеличивается/уменьшается процентная ставка и сумма кредита,
@@ -37,20 +32,23 @@ public class CalculatorService {
         BigDecimal requestedAmount = requestDto.getAmount();
         Integer monthsTerm = requestDto.getTerm();
         List<LoanOfferDto> loanOffers = new ArrayList<>();
-        BigDecimal amountWithInsurance = requestedAmount.add(getInsuranceAmount(requestedAmount));
+        //todo подумать как упростить возможно избавится от отдельной переменной amountWithInsurance
+        BigDecimal amountWithInsurance = insurance.getAmountWithInsurance(requestedAmount);
         BigDecimal basicYearRate;
         //todo выяснить нужно ли округлять для DTO. В ТЗ ничего не сказано про округление и валюту.
+
+        //todo вынести однотипный код в отдельный метод
 
         //isInsuranceEnabled - false; isSalaryClient - false;
         basicYearRate = scoringProps.getBasicYearRate();
 
+
+        //todo ко всем BigDecimal применить .stripTrailingZeros() для удаления нулей справа
         loanOffers.add(new LoanOfferDto(UUID.randomUUID(),
                 requestedAmount,
-                getAnnuityTotalPayment(requestedAmount, basicYearRate, monthsTerm,
-                        roundingProps.getScale(), roundingProps.getRoundingMode()),
+                payments.getTotalAmount(requestedAmount, basicYearRate, monthsTerm),
                 monthsTerm,
-                getAnnuityMonthlyPayment(requestedAmount, basicYearRate, monthsTerm,
-                        roundingProps.getScale(), roundingProps.getRoundingMode()),
+                payments.getAnnuityMonthlyPayment(requestedAmount, basicYearRate, monthsTerm),
                 basicYearRate,
                 false,
                 false));
@@ -62,11 +60,9 @@ public class CalculatorService {
 
         loanOffers.add(new LoanOfferDto(UUID.randomUUID(),
                 requestedAmount,
-                getAnnuityTotalPayment(amountWithInsurance, basicYearRate, monthsTerm,
-                        roundingProps.getScale(), roundingProps.getRoundingMode()),
+                payments.getTotalAmount(amountWithInsurance, basicYearRate, monthsTerm),
                 monthsTerm,
-                getAnnuityMonthlyPayment(amountWithInsurance, basicYearRate, monthsTerm,
-                        roundingProps.getScale(), roundingProps.getRoundingMode()),
+                payments.getAnnuityMonthlyPayment(amountWithInsurance, basicYearRate, monthsTerm),
                 basicYearRate,
                 true,
                 true));
@@ -77,11 +73,9 @@ public class CalculatorService {
 
         loanOffers.add(new LoanOfferDto(UUID.randomUUID(),
                 requestedAmount,
-                getAnnuityTotalPayment(amountWithInsurance, basicYearRate, monthsTerm,
-                        roundingProps.getScale(), roundingProps.getRoundingMode()),
+                payments.getTotalAmount(amountWithInsurance, basicYearRate, monthsTerm),
                 monthsTerm,
-                getAnnuityMonthlyPayment(amountWithInsurance, basicYearRate, monthsTerm,
-                        roundingProps.getScale(), roundingProps.getRoundingMode()),
+                payments.getAnnuityMonthlyPayment(amountWithInsurance, basicYearRate, monthsTerm),
                 basicYearRate,
                 true,
                 false));
@@ -92,11 +86,9 @@ public class CalculatorService {
 
         loanOffers.add(new LoanOfferDto(UUID.randomUUID(),
                 requestedAmount,
-                getAnnuityTotalPayment(requestedAmount, basicYearRate, monthsTerm,
-                        roundingProps.getScale(), roundingProps.getRoundingMode()),
+                payments.getTotalAmount(requestedAmount, basicYearRate, monthsTerm),
                 monthsTerm,
-                getAnnuityMonthlyPayment(requestedAmount, basicYearRate, monthsTerm,
-                        roundingProps.getScale(), roundingProps.getRoundingMode()),
+                payments.getAnnuityMonthlyPayment(requestedAmount, basicYearRate, monthsTerm),
                 basicYearRate,
                 false,
                 true));
@@ -105,10 +97,35 @@ public class CalculatorService {
         return loanOffers;
     }
 
-    private BigDecimal getInsuranceAmount(BigDecimal requestedAmount) {
-        return requestedAmount.multiply(scoringProps.getInsuranceRate())
-                .divide(BigDecimal.valueOf(100), roundingProps.getScale(),
-                        roundingProps.getRoundingMode());
-    }
+    public CreditDto scoring(ScoringDataDto scoringDataDto) {
+        //todo вначале валидируем scoringDataDto
+        //Получаем ставку проверяем ставку и сразу возвращаем в случае отказа
+        Optional<BigDecimal> rateOpt = Rate.getRate(scoringDataDto, scoringProps.getBasicYearRate());
+        if (rateOpt.isEmpty()) {
+            return null;
+        }
+        BigDecimal yearRate = rateOpt.get();
+        Integer term = scoringDataDto.getTerm();
 
+        //получаем сумму кредита с учетом страховки
+        BigDecimal amount = scoringDataDto.getIsInsuranceEnabled() ?
+                insurance.getAmountWithInsurance(scoringDataDto.getAmount()) : scoringDataDto.getAmount();
+
+        // получаем месячные платежи
+        BigDecimal monthlyPayment = payments.getAnnuityMonthlyPayment(amount,
+                yearRate, term);
+
+        //Получаем график платежей
+        List<PaymentScheduleElementDto> paymentSchedule = payments.getPaymentSchedule(amount, yearRate, monthlyPayment);
+
+        //получаем общую сумму платежей по кредиту
+        BigDecimal totalAmount = payments.getTotalPayment(paymentSchedule);
+        System.out.println("Итоговая сумма платежей  " + totalAmount);
+
+        //Получаем PSK
+        BigDecimal psk = payments.getPsk(amount, totalAmount, term);
+
+        return new CreditDto(scoringDataDto.getAmount(), term, monthlyPayment, yearRate, psk,
+                scoringDataDto.getIsInsuranceEnabled(), scoringDataDto.getIsSalaryClient(), paymentSchedule);
+    }
 }
