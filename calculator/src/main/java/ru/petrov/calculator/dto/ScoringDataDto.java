@@ -1,12 +1,12 @@
 package ru.petrov.calculator.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.petrov.calculator.dto.enums.Gender;
 import ru.petrov.calculator.dto.enums.MaritalStatus;
 
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 

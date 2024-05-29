@@ -1,6 +1,5 @@
 package ru.petrov.calculator.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +16,7 @@ import ru.petrov.calculator.service.CalculatorService;
 import ru.petrov.calculator.util.CheckBindingResult;
 import ru.petrov.calculator.util.validator.LoanStatementRequestDtoValidator;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
