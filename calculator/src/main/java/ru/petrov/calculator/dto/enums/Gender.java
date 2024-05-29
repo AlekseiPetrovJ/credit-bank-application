@@ -1,4 +1,4 @@
-package ru.petrov.calculator.dto;
+package ru.petrov.calculator.dto.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
