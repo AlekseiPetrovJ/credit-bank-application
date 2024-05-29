@@ -1,10 +1,15 @@
 package ru.petrov.calculator.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
+
+@RequiredArgsConstructor
 @Getter
 public enum Gender {
-    MALE, FAMELE, NON_BINARY
+    MALE("мужчина", 1),
+    FAMELE("женщина", 2);
+    private final String title;
+    private final int code;
+
 }
