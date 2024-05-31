@@ -20,7 +20,7 @@ public class LoanStatementRequestDtoValidator implements Validator {
         LoanStatementRequestDto requestDto = (LoanStatementRequestDto) target;
         //todo добавить проверку возраста
         if (Period.between(requestDto.getBirthdate(), LocalDate.now()).getYears()<18) {
-            errors.rejectValue("birthdate", "", "should be no later than 18 years from the current date ");
+            errors.rejectValue("birthdate", "", "should be no later than 18 years from the current date");
         }
     }
 }
