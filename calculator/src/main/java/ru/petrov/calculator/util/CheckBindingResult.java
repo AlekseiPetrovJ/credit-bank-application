@@ -7,7 +7,7 @@ import ru.petrov.calculator.util.exception.NotValidDto;
 import java.util.List;
 
 public class CheckBindingResult {
-    public void check(BindingResult bindingResult){
+    public static void check(BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             StringBuilder errorMsg = new StringBuilder();
             List<FieldError> errors = bindingResult.getFieldErrors();

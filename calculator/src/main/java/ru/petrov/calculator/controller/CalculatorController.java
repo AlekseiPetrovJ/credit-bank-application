@@ -31,14 +31,14 @@ public class CalculatorController {
                                                      BindingResult result){
 
         loanStatementRequestDtoValidator.validate(requestDto, result);
-        new CheckBindingResult().check(result);
+        CheckBindingResult.check(result);
 
         return ResponseEntity.ok(calculatorService.preScoring(requestDto));
     }
 
     @PostMapping("/calc")
     public ResponseEntity<CreditDto> calc(@RequestBody @Valid ScoringDataDto scoringDataDto, BindingResult result){
-        new CheckBindingResult().check(result);
+        CheckBindingResult.check(result);
         return ResponseEntity.ok(calculatorService.scoring(scoringDataDto));
     }
 }
