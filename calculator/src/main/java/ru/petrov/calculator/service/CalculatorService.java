@@ -17,6 +17,7 @@ public class CalculatorService {
     private final ScoringProps scoringProps;
     private final Insurance insurance;
     private final AnnuityPayments payments;
+    private final Rate rate;
 
 
     /**
@@ -100,7 +101,7 @@ public class CalculatorService {
     public CreditDto scoring(ScoringDataDto scoringDataDto) {
         //todo вначале валидируем scoringDataDto
         //Получаем ставку проверяем ставку и сразу возвращаем в случае отказа
-        Optional<BigDecimal> rateOpt = Rate.getRate(scoringDataDto, scoringProps.getBasicYearRate());
+        Optional<BigDecimal> rateOpt = rate.getRate(scoringDataDto);
         if (rateOpt.isEmpty()) {
             return null;
         }
@@ -120,7 +121,6 @@ public class CalculatorService {
 
         //получаем общую сумму платежей по кредиту
         BigDecimal totalAmount = payments.getTotalPayment(paymentSchedule);
-        System.out.println("Итоговая сумма платежей  " + totalAmount);
 
         //Получаем PSK
         BigDecimal psk = payments.getPsk(amount, totalAmount, term);
