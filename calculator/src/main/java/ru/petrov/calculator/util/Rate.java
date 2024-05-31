@@ -1,5 +1,8 @@
 package ru.petrov.calculator.util;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import ru.petrov.calculator.config.ScoringProps;
 import ru.petrov.calculator.dto.*;
 import ru.petrov.calculator.dto.enums.EmploymentStatus;
 import ru.petrov.calculator.dto.enums.Gender;
@@ -13,7 +16,11 @@ import java.util.Optional;
 
 import static ru.petrov.calculator.dto.enums.EmploymentStatus.*;
 
+@Component
+@RequiredArgsConstructor
 public class Rate {
+    private final ScoringProps scoringProps;
+
     /**
      * Рассчитывает процентную ставку в зависимости от входных параметров:
      * Цена страховки уменьшает ставку на 3.
@@ -28,25 +35,25 @@ public class Rate {
      *
      * @return Optional.empty() в случае отказа в предоставлении кредита
      */
-    public static Optional<BigDecimal> getRate(BigDecimal amount,
-                                               BigDecimal basicYearRate,
-                                               Boolean isInsuranceEnabled,
-                                               Boolean isSalaryClient,
-                                               EmploymentStatus employmentStatus,
-                                               Position position,
-                                               BigDecimal salary,
-                                               MaritalStatus maritalStatus,
-                                               LocalDate birthdate,
-                                               Gender gender,
-                                               Integer workExperienceTotal,
-                                               Integer workExperienceCurrent) {
+    public Optional<BigDecimal> getRate(BigDecimal amount,
+                                        Boolean isInsuranceEnabled,
+                                        Boolean isSalaryClient,
+                                        EmploymentStatus employmentStatus,
+                                        Position position,
+                                        BigDecimal salary,
+                                        MaritalStatus maritalStatus,
+                                        LocalDate birthdate,
+                                        Gender gender,
+                                        Integer workExperienceTotal,
+                                        Integer workExperienceCurrent) {
         int age = Period.between(birthdate, LocalDate.now()).getYears();
         boolean isAmountMore25Salary = amount.compareTo(salary.multiply(BigDecimal.valueOf(25))) > 0;
+
         BigDecimal resultRate;
         if (employmentStatus.equals(UNEMPLOYED) || isAmountMore25Salary || age < 20 || age > 65 || workExperienceTotal < 18 || workExperienceCurrent < 3) {
             return Optional.empty();
         } else {
-            resultRate = basicYearRate;
+            resultRate = scoringProps.getBasicYearRate();
 
             if (employmentStatus.equals(SELF_EMPLOYED)) resultRate = resultRate.add(BigDecimal.ONE);
             if (employmentStatus.equals(BUSINESS_OWNER)) resultRate = resultRate.add(BigDecimal.valueOf(2));
@@ -74,9 +81,11 @@ public class Rate {
      *
      * @return Optional пустой в случае отказа в предоставлении кредита
      */
-    public static Optional<BigDecimal> getRate(ScoringDataDto scoringDataDto, BigDecimal basicYearRate) {
+    public Optional<BigDecimal> getRate(ScoringDataDto scoringDataDto) {
+        if (scoringDataDto == null){
+            return Optional.empty();
+        }
         return getRate(scoringDataDto.getAmount(),
-                basicYearRate,
                 scoringDataDto.getIsInsuranceEnabled(),
                 scoringDataDto.getIsSalaryClient(),
                 scoringDataDto.getEmployment().getEmploymentStatus(),
