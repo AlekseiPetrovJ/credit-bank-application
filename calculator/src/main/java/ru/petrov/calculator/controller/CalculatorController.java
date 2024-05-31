@@ -1,6 +1,7 @@
 package ru.petrov.calculator.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -33,12 +34,12 @@ public class CalculatorController {
         loanStatementRequestDtoValidator.validate(requestDto, result);
         CheckBindingResult.check(result);
 
-        return ResponseEntity.ok(calculatorService.preScoring(requestDto));
+        return new ResponseEntity<>(calculatorService.preScoring(requestDto), HttpStatus.OK);
     }
 
     @PostMapping("/calc")
     public ResponseEntity<CreditDto> calc(@RequestBody @Valid ScoringDataDto scoringDataDto, BindingResult result){
         CheckBindingResult.check(result);
-        return ResponseEntity.ok(calculatorService.scoring(scoringDataDto));
+        return new ResponseEntity<>(calculatorService.scoring(scoringDataDto), HttpStatus.OK);
     }
 }
