@@ -13,7 +13,7 @@ public class ExceptionApiHandler {
 
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.UNPROCESSABLE_ENTITY)
-    private ResponseEntity<ErrorResponse> handleException(NotValidDto e) {
+    public ResponseEntity<ErrorResponse> handleException(NotValidDto e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
