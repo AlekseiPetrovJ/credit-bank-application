@@ -10,8 +10,9 @@ import org.springframework.http.ResponseEntity;
 import ru.petrov.calculator.util.exception.ErrorResponse;
 import ru.petrov.calculator.util.exception.NotValidDto;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Objects;
 
+import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class ExceptionApiHandlerTest {
     @InjectMocks
@@ -24,7 +25,7 @@ class ExceptionApiHandlerTest {
         ResponseEntity<ErrorResponse> responseEntity = exceptionHandler.handleException(notValid);
 
         assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, responseEntity.getStatusCode());
-        assertEquals("not valid", responseEntity.getBody().getMessage());
+        assertEquals("not valid", Objects.requireNonNull(responseEntity.getBody()).getMessage());
         assertTrue(System.currentTimeMillis() - responseEntity.getBody().getTimestamp()< 5000);
     }
 }
