@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +13,8 @@ import ru.petrov.calculator.dto.LoanOfferDto;
 import ru.petrov.calculator.dto.LoanStatementRequestDto;
 import ru.petrov.calculator.dto.ScoringDataDto;
 import ru.petrov.calculator.service.CalculatorService;
-import ru.petrov.calculator.util.CheckBindingResult;
-import ru.petrov.calculator.util.validator.LoanStatementRequestDtoValidator;
+import ru.petrov.calculator.util.exception.NotValidDto;
+import ru.petrov.calculator.util.validator.Validator;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -25,21 +24,28 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CalculatorController {
     private final CalculatorService calculatorService;
-    private final LoanStatementRequestDtoValidator loanStatementRequestDtoValidator;
 
     @PostMapping("/offers")
-    public ResponseEntity<List<LoanOfferDto>> offers(@RequestBody @Valid LoanStatementRequestDto requestDto,
-                                                     BindingResult result){
-
-        loanStatementRequestDtoValidator.validate(requestDto, result);
-        CheckBindingResult.check(result);
-
-        return new ResponseEntity<>(calculatorService.preScoring(requestDto), HttpStatus.OK);
+    public ResponseEntity<List<LoanOfferDto>> offers(@RequestBody @Valid LoanStatementRequestDto requestDto) {
+        try {
+            Validator.validateAgeOlder18(requestDto);
+            return new ResponseEntity<>(calculatorService.preScoring(requestDto), HttpStatus.OK);
+        } catch (NotValidDto e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/calc")
-    public ResponseEntity<CreditDto> calc(@RequestBody @Valid ScoringDataDto scoringDataDto, BindingResult result){
-        CheckBindingResult.check(result);
-        return new ResponseEntity<>(calculatorService.scoring(scoringDataDto), HttpStatus.OK);
+    public ResponseEntity<CreditDto> calc(@RequestBody @Valid ScoringDataDto scoringDataDto) {
+        try {
+            Validator.validateAgeOlder18(scoringDataDto);
+            return new ResponseEntity<>(calculatorService.scoring(scoringDataDto), HttpStatus.OK);
+        } catch (NotValidDto e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
