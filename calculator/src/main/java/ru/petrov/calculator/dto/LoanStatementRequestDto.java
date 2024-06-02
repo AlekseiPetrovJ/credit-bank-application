@@ -13,7 +13,6 @@ public class LoanStatementRequestDto {
     @DecimalMin(value = "30000")
     @NotNull
     @Schema(example = "35000")
-    //todo Уточнить как проверять, что ввели число.
     private final BigDecimal amount;
 
     /**
