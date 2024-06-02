@@ -2,11 +2,8 @@ package ru.petrov.calculator.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import ru.petrov.calculator.config.ScoringProps;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.petrov.calculator.dto.EmploymentDto;
 import ru.petrov.calculator.dto.LoanStatementRequestDto;
 import ru.petrov.calculator.dto.ScoringDataDto;
@@ -14,31 +11,21 @@ import ru.petrov.calculator.dto.enums.EmploymentStatus;
 import ru.petrov.calculator.dto.enums.Gender;
 import ru.petrov.calculator.dto.enums.MaritalStatus;
 import ru.petrov.calculator.dto.enums.Position;
-import ru.petrov.calculator.util.AnnuityPayments;
-import ru.petrov.calculator.util.Insurance;
-import ru.petrov.calculator.util.Rate;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class CalculatorServiceTest {
-    @Mock
-    private ScoringProps scoringProps;
-    @Mock
-    private Insurance insurance;
-    @Mock
-    private AnnuityPayments payments;
-    @Mock
-    private Rate rate;
 
-    @InjectMocks
+    @Autowired
     private CalculatorService calculatorService;
+
+    //todo assertEquals(4, calculatorService.preScoring(request).size()); - перевести на json
+    // подготовить тестовый ответ в виде json. Результат через маппер перевести в json и сравнить с эталонным.
+    //есть параметры маппера по виду сравнения compareMode. JSONAssert.assertEquals(string, string, compareMode)
 
     @Test
     @DisplayName("Проверка количества возвращаемых предложений")
@@ -46,28 +33,23 @@ class CalculatorServiceTest {
         LoanStatementRequestDto request = new LoanStatementRequestDto(BigDecimal.valueOf(40000),
                 12, "Ivanov", "Ivan", "Ivanovich", "sfd@sdf.ru",
                 LocalDate.of(2000, 5, 30), "5555", "878989");
-        when(scoringProps.getBasicYearRate()).thenReturn(BigDecimal.TEN);
-        when(scoringProps.getInsuranceFactor()).thenReturn(BigDecimal.valueOf(2));
-        when(scoringProps.getSalaryClientFactor()).thenReturn(BigDecimal.ONE);
-        when(payments.getAnnuityMonthlyPayment(any(), any(), any())).thenReturn(BigDecimal.valueOf(1000));
         assertEquals(4, calculatorService.preScoring(request).size());
+
     }
 
     @Test
-    @DisplayName("Проверка соответствия выходных данных входным")
+    @DisplayName("Проверка соответствия параметров ответов параметрам запросов")
     void testPreScoringEquals() {
         BigDecimal amount = BigDecimal.valueOf(40000);
         int term = 12;
         LoanStatementRequestDto request = new LoanStatementRequestDto(amount,
                 term, "Ivanov", "Ivan", "Ivanovich", "sfd@sdf.ru",
                 LocalDate.of(2000, 5, 30), "5555", "878989");
-        when(scoringProps.getBasicYearRate()).thenReturn(BigDecimal.TEN);
-        when(scoringProps.getInsuranceFactor()).thenReturn(BigDecimal.valueOf(2));
-        when(scoringProps.getSalaryClientFactor()).thenReturn(BigDecimal.ONE);
-        when(payments.getAnnuityMonthlyPayment(any(), any(), any())).thenReturn(BigDecimal.valueOf(1000));
-
-        assertEquals(amount, calculatorService.preScoring(request).get(0).getRequestedAmount());
-        assertEquals(term, calculatorService.preScoring(request).get(0).getTerm());
+        assertAll(
+                "Соответствие параметров ответов параметрам запросов",
+                () -> assertEquals(amount, calculatorService.preScoring(request).get(0).getRequestedAmount()),
+                () -> assertEquals(term, calculatorService.preScoring(request).get(0).getTerm())
+        );
     }
 
     @Test
@@ -82,7 +64,6 @@ class CalculatorServiceTest {
                 Gender.MALE, LocalDate.of(2000, 5, 29), "7007",
                 "111222", LocalDate.of(2018, 5, 30), "TTT",
                 MaritalStatus.DIVORCED, 0, employmentDto, "555", false, false);
-        when(rate.getRate(scoringDataDto)).thenReturn(Optional.empty());
         assertNull(calculatorService.scoring(scoringDataDto));
     }
 
@@ -98,7 +79,6 @@ class CalculatorServiceTest {
                 Gender.MALE, LocalDate.of(2000, 5, 29), "7007",
                 "111222", LocalDate.of(2018, 5, 30), "TTT",
                 MaritalStatus.DIVORCED, 0, employmentDto, "555", false, false);
-        when(rate.getRate(scoringDataDto)).thenReturn(Optional.of(BigDecimal.TEN));
         assertNotNull(calculatorService.scoring(scoringDataDto));
     }
 }
