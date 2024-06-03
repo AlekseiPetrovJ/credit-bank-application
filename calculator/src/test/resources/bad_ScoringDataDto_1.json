@@ -1,0 +1,26 @@
+{
+  "amount": 35000,
+  "term": 6,
+  "firstName": "Ivan",
+  "lastName": "Petrov",
+  "middleName": "Ivanovich",
+  "gender": "MALE",
+  "birthdate": "2000-02-15",
+  "passportSeries": "7007",
+  "passportNumber": "777888",
+  "passportIssueDate": "2024-06-02",
+  "passportIssueBranch": "ddeedddf",
+  "maritalStatus": "MARRIED",
+  "dependentAmount": 0,
+  "employment": {
+    "employmentStatus": "UNEMPLOYED",
+    "employerINN": "123123123",
+    "salary": 50000,
+    "position": "MIDDLE_MANAGER",
+    "workExperienceTotal": 36,
+    "workExperienceCurrent": 36
+  },
+  "accountNumber": "ed23e23e111",
+  "isInsuranceEnabled": true,
+  "isSalaryClient": true
+}

@@ -23,9 +23,11 @@ class ExceptionApiHandlerTest {
     void testHandlerExeption(){
         NotValidDto notValid = new NotValidDto("not valid");
         ResponseEntity<ErrorResponse> responseEntity = exceptionHandler.handleException(notValid);
+        assertAll(
+                () -> assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, responseEntity.getStatusCode()),
+                () -> assertEquals("not valid", Objects.requireNonNull(responseEntity.getBody()).getMessage()),
+                () -> assertTrue(System.currentTimeMillis() - responseEntity.getBody().getTimestamp() < 5000)
+        );
 
-        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, responseEntity.getStatusCode());
-        assertEquals("not valid", Objects.requireNonNull(responseEntity.getBody()).getMessage());
-        assertTrue(System.currentTimeMillis() - responseEntity.getBody().getTimestamp()< 5000);
     }
 }

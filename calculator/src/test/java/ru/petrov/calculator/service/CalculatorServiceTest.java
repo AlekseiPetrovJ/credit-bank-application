@@ -1,19 +1,27 @@
 package ru.petrov.calculator.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.petrov.calculator.dto.EmploymentDto;
+import org.springframework.core.io.ClassPathResource;
+import ru.petrov.calculator.dto.LoanOfferDto;
 import ru.petrov.calculator.dto.LoanStatementRequestDto;
 import ru.petrov.calculator.dto.ScoringDataDto;
-import ru.petrov.calculator.dto.enums.EmploymentStatus;
-import ru.petrov.calculator.dto.enums.Gender;
-import ru.petrov.calculator.dto.enums.MaritalStatus;
-import ru.petrov.calculator.dto.enums.Position;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,63 +30,90 @@ class CalculatorServiceTest {
 
     @Autowired
     private CalculatorService calculatorService;
-
-    //todo assertEquals(4, calculatorService.preScoring(request).size()); - перевести на json
-    // подготовить тестовый ответ в виде json. Результат через маппер перевести в json и сравнить с эталонным.
-    //есть параметры маппера по виду сравнения compareMode. JSONAssert.assertEquals(string, string, compareMode)
-
     @Test
     @DisplayName("Проверка количества возвращаемых предложений")
     void testPreScoringCountOffers() {
-        LoanStatementRequestDto request = new LoanStatementRequestDto(BigDecimal.valueOf(40000),
-                12, "Ivanov", "Ivan", "Ivanovich", "sfd@sdf.ru",
-                LocalDate.of(2000, 5, 30), "5555", "878989");
-        assertEquals(4, calculatorService.preScoring(request).size());
-
+        assertEquals(4, calculatorService
+                .preScoring((LoanStatementRequestDto) getObjectFromFile("good_LoanStatementRequestDto_1.json",
+                        LoanStatementRequestDto.class)).size());
     }
 
     @Test
-    @DisplayName("Проверка соответствия параметров ответов параметрам запросов")
-    void testPreScoringEquals() {
-        BigDecimal amount = BigDecimal.valueOf(40000);
-        int term = 12;
-        LoanStatementRequestDto request = new LoanStatementRequestDto(amount,
-                term, "Ivanov", "Ivan", "Ivanovich", "sfd@sdf.ru",
-                LocalDate.of(2000, 5, 30), "5555", "878989");
-        assertAll(
-                "Соответствие параметров ответов параметрам запросов",
-                () -> assertEquals(amount, calculatorService.preScoring(request).get(0).getRequestedAmount()),
-                () -> assertEquals(term, calculatorService.preScoring(request).get(0).getTerm())
-        );
+    @DisplayName("Сверка результата с эталоном")
+    void testPreScoringEquals() throws JSONException {
+        List<LoanOfferDto> loanOfferDtos = calculatorService
+                .preScoring((LoanStatementRequestDto) getObjectFromFile("good_LoanStatementRequestDto_1.json",
+                        LoanStatementRequestDto.class));
+        String loanOffersActual = getStringFromObject(loanOfferDtos);
+        String loanOffersActualCleared = removeFieldFromJsonArray(loanOffersActual, "statementId");
+        String loanOffersExpected = getStringFromFile("good_list_LoanOfferDto_1.json");
+        String loanOffersExpectedCleared = removeFieldFromJsonArray(loanOffersExpected, "statementId");
+        JSONAssert.assertEquals(loanOffersExpectedCleared, loanOffersActualCleared, JSONCompareMode.LENIENT);
     }
 
     @Test
     @DisplayName("Проверка получения отказа (null)")
     void testScoringReturnNull() {
-        EmploymentDto employmentDto = new EmploymentDto(EmploymentStatus.UNEMPLOYED, "22222", BigDecimal.valueOf(500000), Position.MIDDLE_MANAGER, 20, 10);
-
-        BigDecimal amount = BigDecimal.valueOf(40000);
-        int term = 12;
-        ScoringDataDto scoringDataDto = new ScoringDataDto(BigDecimal.valueOf(35000),
-                12, "Ivanov", "Ivan", "Ivanovich",
-                Gender.MALE, LocalDate.of(2000, 5, 29), "7007",
-                "111222", LocalDate.of(2018, 5, 30), "TTT",
-                MaritalStatus.DIVORCED, 0, employmentDto, "555", false, false);
-        assertNull(calculatorService.scoring(scoringDataDto));
+        ScoringDataDto scoringDataDto1 = (ScoringDataDto) getObjectFromFile("bad_ScoringDataDto_1.json", ScoringDataDto.class);
+        ScoringDataDto scoringDataDto2 = (ScoringDataDto) getObjectFromFile("bad_ScoringDataDto_2.json", ScoringDataDto.class);
+        ScoringDataDto scoringDataDto3 = (ScoringDataDto) getObjectFromFile("bad_ScoringDataDto_3.json", ScoringDataDto.class);
+        assertAll("Отказы по условиям в запросе",
+                () -> assertNull(calculatorService.scoring(scoringDataDto1)),
+                () -> assertNull(calculatorService.scoring(scoringDataDto2)),
+                () -> assertNull(calculatorService.scoring(scoringDataDto3))
+        );
     }
 
     @Test
     @DisplayName("Проверка успешного получения кредитного предложения")
     void testScoringReturnNotNull() {
-        EmploymentDto employmentDto = new EmploymentDto(EmploymentStatus.BUSINESS_OWNER, "22222", BigDecimal.valueOf(500000), Position.MIDDLE_MANAGER, 20, 10);
-
-        BigDecimal amount = BigDecimal.valueOf(40000);
-        int term = 12;
-        ScoringDataDto scoringDataDto = new ScoringDataDto(BigDecimal.valueOf(35000),
-                12, "Ivanov", "Ivan", "Ivanovich",
-                Gender.MALE, LocalDate.of(2000, 5, 29), "7007",
-                "111222", LocalDate.of(2018, 5, 30), "TTT",
-                MaritalStatus.DIVORCED, 0, employmentDto, "555", false, false);
+        ScoringDataDto scoringDataDto = (ScoringDataDto) getObjectFromFile("good_ScoringDataDto_1.json", ScoringDataDto.class);
         assertNotNull(calculatorService.scoring(scoringDataDto));
+    }
+
+    private ObjectMapper getObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new ParameterNamesModule());
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
+    }
+
+    private Object getObjectFromFile(String path, Class clazz) {
+        try {
+            File file = new ClassPathResource(path).getFile();
+            return getObjectMapper().readValue(file, clazz);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getStringFromObject(Object obj) {
+        try {
+            return getObjectMapper().writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getStringFromFile(String path) {
+        try {
+            File file = new ClassPathResource(path).getFile();
+            return new String(Files.readAllBytes(file.toPath()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String removeFieldFromJsonArray(String jsonArrayString, String fieldToRemove) {
+        try {
+            JSONArray jsonArray = new JSONArray(jsonArrayString);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                jsonObject.remove(fieldToRemove);
+            }
+            return jsonArray.toString();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
