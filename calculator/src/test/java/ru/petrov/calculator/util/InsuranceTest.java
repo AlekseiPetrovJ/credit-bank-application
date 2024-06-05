@@ -1,12 +1,10 @@
 package ru.petrov.calculator.util;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.petrov.calculator.config.RoundingProps;
 import ru.petrov.calculator.config.ScoringProps;
 
@@ -15,28 +13,24 @@ import java.math.RoundingMode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class InsuranceTest {
-    @Mock
+    @Autowired
     private ScoringProps scoringProps;
-    @Mock
+    @Autowired
     private RoundingProps roundingProps;
-    @InjectMocks
+    @Autowired
     private Insurance insurance;
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(ints = {1, 0, 10000, 15555})
     @DisplayName("Получение суммы кредита увеличенной на размер страховки")
-    void getAmountWithInsurance() {
-
-        int  insuranceRate = 5;
-        BigDecimal amount = BigDecimal.valueOf(10000);
-
-        Mockito.when(scoringProps.getInsuranceRate()).thenReturn(BigDecimal.valueOf(insuranceRate));
-        Mockito.when(roundingProps.getScale()).thenReturn(5);
-        Mockito.when(roundingProps.getRoundingMode()).thenReturn(RoundingMode.HALF_EVEN);
-        BigDecimal insExpected = amount.multiply(BigDecimal.valueOf(insuranceRate)
-                        .divide(BigDecimal.valueOf(100), roundingProps.getScale(),
-                                roundingProps.getRoundingMode()).add(BigDecimal.ONE));
-        assertEquals(insExpected, insurance.getAmountWithInsurance(amount));
+    void getAmountWithInsurance(int amount) {
+        BigDecimal insuranceRate = scoringProps.getInsuranceRate();
+        Integer scale = roundingProps.getScale();
+        RoundingMode roundingMode = roundingProps.getRoundingMode();
+        BigDecimal insExpected = BigDecimal.valueOf(amount).multiply(insuranceRate
+                .divide(BigDecimal.valueOf(100), scale, roundingMode).add(BigDecimal.ONE));
+        assertEquals(insExpected, insurance.getAmountWithInsurance(BigDecimal.valueOf(amount)));
     }
 }
