@@ -1,6 +1,5 @@
 [
   {
-    "statementId": "9ce6eb72-5c77-4918-a076-8e822ebc8c21",
     "requestedAmount": 35000,
     "totalAmount": 37194.236906925,
     "term": 6,
@@ -10,7 +9,6 @@
     "isSalaryClient": true
   },
   {
-    "statementId": "b6c0cd2f-392a-4515-a340-3607ca5fbe00",
     "requestedAmount": 35000,
     "totalAmount": 37300.746093975,
     "term": 6,
@@ -20,7 +18,6 @@
     "isSalaryClient": false
   },
   {
-    "statementId": "35c5c7e1-651a-4509-bec8-dd78121b1294",
     "requestedAmount": 35000,
     "totalAmount": 36599.212503,
     "term": 6,
@@ -30,7 +27,6 @@
     "isSalaryClient": true
   },
   {
-    "statementId": "d64a1002-5d3a-4f1b-8590-009ce16ee50a",
     "requestedAmount": 35000,
     "totalAmount": 36703.541448,
     "term": 6,
