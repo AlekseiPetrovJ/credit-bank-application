@@ -24,9 +24,9 @@ class CalculatorServiceTest extends CalculatorApplicationTests {
     private CalculatorService calculatorService;
     @Test
     @DisplayName("Проверка количества возвращаемых предложений")
-    void testPreScoringCountOffers() {
+    void testPreScoringCountOffers() throws JsonProcessingException {
         assertEquals(4, calculatorService
-                .preScoring((LoanStatementRequestDto) getObjectFromFile("good_LoanStatementRequestDto_1.json",
+                .preScoring(getObjectMapper().readValue(getStringFromFile("good_LoanStatementRequestDto_1.json"),
                         LoanStatementRequestDto.class)).size());
     }
 
@@ -34,7 +34,7 @@ class CalculatorServiceTest extends CalculatorApplicationTests {
     @DisplayName("Сверка результата с эталоном")
     void testPreScoringEquals() throws JSONException, JsonProcessingException {
         List<LoanOfferDto> loanOfferDtos = calculatorService
-                .preScoring((LoanStatementRequestDto) getObjectFromFile("good_LoanStatementRequestDto_1.json",
+                .preScoring(getObjectMapper().readValue(getStringFromFile("good_LoanStatementRequestDto_1.json"),
                         LoanStatementRequestDto.class));
         String loanOffersActual = getObjectMapper().writeValueAsString(loanOfferDtos);
         String loanOffersExpected = getStringFromFile("good_list_LoanOfferDto_1.json");
@@ -43,10 +43,13 @@ class CalculatorServiceTest extends CalculatorApplicationTests {
 
     @Test
     @DisplayName("Проверка получения отказа (null)")
-    void testScoringReturnNull() {
-        ScoringDataDto scoringDataDto1 = (ScoringDataDto) getObjectFromFile("bad_ScoringDataDto_1.json", ScoringDataDto.class);
-        ScoringDataDto scoringDataDto2 = (ScoringDataDto) getObjectFromFile("bad_ScoringDataDto_2.json", ScoringDataDto.class);
-        ScoringDataDto scoringDataDto3 = (ScoringDataDto) getObjectFromFile("bad_ScoringDataDto_3.json", ScoringDataDto.class);
+    void testScoringReturnNull() throws JsonProcessingException {
+        ScoringDataDto scoringDataDto1 = getObjectMapper().readValue(getStringFromFile("bad_ScoringDataDto_1.json"),
+                ScoringDataDto.class);
+        ScoringDataDto scoringDataDto2 = getObjectMapper().readValue(getStringFromFile("bad_ScoringDataDto_2.json"),
+                ScoringDataDto.class);
+        ScoringDataDto scoringDataDto3 = getObjectMapper().readValue(getStringFromFile("bad_ScoringDataDto_3.json"),
+                ScoringDataDto.class);
         assertAll("Отказы по условиям в запросе",
                 () -> assertNull(calculatorService.scoring(scoringDataDto1)),
                 () -> assertNull(calculatorService.scoring(scoringDataDto2)),
@@ -56,8 +59,9 @@ class CalculatorServiceTest extends CalculatorApplicationTests {
 
     @Test
     @DisplayName("Проверка успешного получения кредитного предложения")
-    void testScoringReturnNotNull() {
-        ScoringDataDto scoringDataDto = (ScoringDataDto) getObjectFromFile("good_ScoringDataDto_1.json", ScoringDataDto.class);
+    void testScoringReturnNotNull() throws JsonProcessingException {
+        ScoringDataDto scoringDataDto = getObjectMapper().readValue(getStringFromFile("good_ScoringDataDto_1.json"),
+                ScoringDataDto.class);
         assertNotNull(calculatorService.scoring(scoringDataDto));
     }
 }
