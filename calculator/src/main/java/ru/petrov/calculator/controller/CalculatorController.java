@@ -50,8 +50,13 @@ public class CalculatorController {
         try {
             Validator.validateAgeOlder18(scoringDataDto);
             log.info("successfully passed validation {}", scoringDataDto);
-            log.info("POST response {}", new ResponseEntity<>(calculatorService.scoring(scoringDataDto), HttpStatus.OK));
-            return new ResponseEntity<>(calculatorService.scoring(scoringDataDto), HttpStatus.OK);
+            CreditDto creditDto = calculatorService.scoring(scoringDataDto);
+            if (creditDto == null){
+                log.info("Отказ в предоставлении кредита. creditDto = {}", creditDto);
+                throw new NotValidDto("Отказ в предоставлении кредита");
+            }
+            log.info("POST response {}", new ResponseEntity<>(creditDto, HttpStatus.OK));
+            return new ResponseEntity<>(creditDto, HttpStatus.OK);
         } catch (NotValidDto e) {
             log.error("NotValidDto error {} ", e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
