@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import ru.petrov.calculator.dto.enums.Gender;
 import ru.petrov.calculator.dto.enums.MaritalStatus;
 
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,12 +27,12 @@ public class ScoringDataDto {
     private final Integer term;
 
     @Pattern(regexp = "^[a-zA-Z]{2,30}$", message = "First name might  contain 2-30 latin char")
-    @NotEmpty(message = "First name not might be empty")
+    @NotBlank(message = "First name not might be blank")
     @Schema(example = "Ivan")
     private final String firstName;
 
     @Pattern(regexp = "^[a-zA-Z]{2,30}$", message = "Last name might  contain 2-30 latin char")
-    @NotEmpty(message = "Last name not might be empty")
+    @NotBlank(message = "Last name not might be blank")
     @Schema(example = "Petrov")
     private final String lastName;
 
@@ -39,7 +40,7 @@ public class ScoringDataDto {
     @Schema(example = "Ivanovich")
     private final String middleName;
 
-
+    @NotNull
     private final Gender gender;
 
     @NotNull(message = "Birth date is required")
@@ -55,13 +56,31 @@ public class ScoringDataDto {
     @Pattern(regexp = "^[0-9]{6}$", message = "Passport number should be contain 6 digit")
     @Schema(example = "777888")
     private final String passportNumber;
-    private final LocalDate passportIssueDate;
-    private final String passportIssueBranch;
-    private final MaritalStatus maritalStatus;
-    private final Integer dependentAmount;
-    private final EmploymentDto employment;
-    private final String accountNumber;
-    private final Boolean isInsuranceEnabled;
-    private final Boolean isSalaryClient;
 
+    @NotNull
+    @Past(message = "Birth date must be in the past")
+    private final LocalDate passportIssueDate;
+
+    @NotBlank
+    private final String passportIssueBranch;
+
+    @NotNull
+    private final MaritalStatus maritalStatus;
+
+    @NotNull
+    @Min(0)
+    private final Integer dependentAmount;
+
+    @NotNull
+    @Valid
+    private final EmploymentDto employment;
+
+    @NotBlank
+    private final String accountNumber;
+
+    @NotNull
+    private final Boolean isInsuranceEnabled;
+
+    @NotNull
+    private final Boolean isSalaryClient;
 }
