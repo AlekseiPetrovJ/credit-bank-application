@@ -99,40 +99,48 @@ public class CalculatorServiceImpl implements CalculatorService {
             return Optional.empty();
         }
         int age = Period.between(scoringDataDto.getBirthdate(), LocalDate.now()).getYears();
-        boolean isAmountMore25Salary = scoringDataDto.getAmount()
-                .compareTo(scoringDataDto.getEmployment().getSalary().multiply(BigDecimal.valueOf(25))) > 0;
+        boolean loanSizeIsTooLarge = scoringDataDto.getAmount()
+                .compareTo(scoringDataDto.getEmployment()
+                        .getSalary().multiply(scoringProps.getFactorBetweenLoanAndSalaryAllowLoan())) > 0;
 
         BigDecimal resultRate;
-        if (scoringDataDto.getEmployment().getEmploymentStatus().equals(UNEMPLOYED)
-                || isAmountMore25Salary || age < 20 || age > 65
-                || scoringDataDto.getEmployment().getWorkExperienceTotal() < 18
-                || scoringDataDto.getEmployment().getWorkExperienceCurrent() < 3) {
+        if (scoringDataDto.getEmployment().getEmploymentStatus()==(UNEMPLOYED)
+                || loanSizeIsTooLarge || age < scoringProps.getMinAgeForPrescoring()
+                || age > scoringProps.getMaxAgeForLoan()
+                || scoringDataDto.getEmployment().getWorkExperienceTotal() < scoringProps.getMinWorkExperienceTotal()
+                || scoringDataDto.getEmployment().getWorkExperienceCurrent() < scoringProps.getMinWorkExperienceCurrent()) {
             return Optional.empty();
         } else {
             resultRate = scoringProps.getBasicYearRate();
 
-            if (scoringDataDto.getEmployment().getEmploymentStatus().equals(SELF_EMPLOYED))
-                resultRate = resultRate.add(BigDecimal.ONE);
-            if (scoringDataDto.getEmployment().getEmploymentStatus().equals(BUSINESS_OWNER))
-                resultRate = resultRate.add(BigDecimal.valueOf(2));
+            if (scoringDataDto.getEmployment().getEmploymentStatus()==(SELF_EMPLOYED))
+                resultRate = resultRate.add(scoringProps.getSelfEmployedPoints());
+            if (scoringDataDto.getEmployment().getEmploymentStatus()==(BUSINESS_OWNER))
+                resultRate = resultRate.add(scoringProps.getBusinessOwnerPoints());
 
-            if (scoringDataDto.getEmployment().getPosition().equals(Position.MIDDLE_MANAGER))
-                resultRate = resultRate.subtract(BigDecimal.valueOf(2));
-            if (scoringDataDto.getEmployment().getPosition().equals(Position.TOP_MANAGER))
-                resultRate = resultRate.subtract(BigDecimal.valueOf(3));
+            if (scoringDataDto.getEmployment().getPosition()==(Position.MIDDLE_MANAGER))
+                resultRate = resultRate.subtract(scoringProps.getMiddleManagerPoints());
+            if (scoringDataDto.getEmployment().getPosition()==(Position.TOP_MANAGER))
+                resultRate = resultRate.subtract(scoringProps.getTopManagerPoints());
 
-            if (scoringDataDto.getMaritalStatus().equals(MaritalStatus.MARRIED))
-                resultRate = resultRate.subtract(BigDecimal.valueOf(3));
-            if (scoringDataDto.getMaritalStatus().equals(MaritalStatus.DIVORCED))
-                resultRate = resultRate.add(BigDecimal.ONE);
+            if (scoringDataDto.getMaritalStatus()==(MaritalStatus.MARRIED))
+                resultRate = resultRate.subtract(scoringProps.getMarriedPoints());
+            if (scoringDataDto.getMaritalStatus()==(MaritalStatus.DIVORCED))
+                resultRate = resultRate.add(scoringProps.getDivorcedPoints());
 
-            if (scoringDataDto.getGender().equals(Gender.FAMELE) && age >= 32 && age <= 60)
-                resultRate = resultRate.subtract(BigDecimal.valueOf(3));
-            if (scoringDataDto.getGender().equals(Gender.MALE) && age >= 30 && age <= 55)
-                resultRate = resultRate.subtract(BigDecimal.valueOf(3));
+            if (scoringDataDto.getGender()==(Gender.FAMELE) &&
+                    age >= scoringProps.getMinAgeFemaleForPoints() &&
+                    age <= scoringProps.getMaxAgeFemaleForPoints())
+                resultRate = resultRate.subtract(scoringProps.getAgeFemalePoints());
+            if (scoringDataDto.getGender()==(Gender.MALE) &&
+                    age >= scoringProps.getMinAgeMaleForPoints() &&
+                    age <= scoringProps.getMaxAgeMaleForPoints())
+                resultRate = resultRate.subtract(scoringProps.getAgeMalePoints());
 
-            if (scoringDataDto.getIsInsuranceEnabled()) resultRate = resultRate.subtract(BigDecimal.valueOf(3));
-            if (scoringDataDto.getIsSalaryClient()) resultRate = resultRate.subtract(BigDecimal.valueOf(1));
+            if (scoringDataDto.getIsInsuranceEnabled()) resultRate = resultRate.
+                    subtract(scoringProps.getInsuranceFactor());
+            if (scoringDataDto.getIsSalaryClient()) resultRate = resultRate.
+                    subtract(scoringProps.getSalaryClientFactor());
 
         }
         return Optional.of(resultRate);
