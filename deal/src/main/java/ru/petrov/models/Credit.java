@@ -4,9 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.Type;
 import ru.petrov.models.enums.CreditStatus;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -18,7 +16,9 @@ import java.util.UUID;
 @Entity
 public class Credit {
     @Id
-    private UUID clientId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "credit_id", nullable = false)
+    private UUID creditId;
     private Integer term;
     private BigDecimal monthlyPayment;
     private BigDecimal rate;
