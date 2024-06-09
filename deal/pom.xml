@@ -67,6 +67,12 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+<!--        for JSONB save in postgresql-->
+        <dependency>
+                <groupId>io.hypersistence</groupId>
+                <artifactId>hypersistence-utils-hibernate-55</artifactId>
+                <version>3.7.6</version>
+        </dependency>
 
     </dependencies>
 
