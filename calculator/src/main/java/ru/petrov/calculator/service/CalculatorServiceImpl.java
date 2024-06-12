@@ -41,7 +41,7 @@ public class CalculatorServiceImpl implements CalculatorService {
         loanOffers.add(addOffer(requestDto, true, false));
         loanOffers.add(addOffer(requestDto, false, true));
 
-        loanOffers.sort(Comparator.comparing(LoanOfferDto::getRate));
+        loanOffers.sort(Comparator.comparing(LoanOfferDto::getRate).reversed());
         return loanOffers;
     }
 
