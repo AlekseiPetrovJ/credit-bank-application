@@ -2,8 +2,8 @@ package ru.petrov.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import ru.petrov.dto.enums.EmploymentStatus;
-import ru.petrov.dto.enums.Position;
+import ru.petrov.models.enums.EmploymentStatus;
+import ru.petrov.models.enums.Position;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;

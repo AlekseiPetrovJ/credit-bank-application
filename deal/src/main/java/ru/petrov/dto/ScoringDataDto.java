@@ -3,8 +3,8 @@ package ru.petrov.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.petrov.dto.enums.Gender;
-import ru.petrov.dto.enums.MaritalStatus;
+import ru.petrov.models.enums.Gender;
+import ru.petrov.models.enums.MaritalStatus;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
