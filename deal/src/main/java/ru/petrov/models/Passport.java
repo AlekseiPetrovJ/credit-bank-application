@@ -18,6 +18,7 @@ public class Passport {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID passportId;
     private String series;
+    private String number;
     private String issueBranch;
     private LocalDate issueDate;
 }

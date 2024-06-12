@@ -41,17 +41,20 @@ public class Client {
     @NotNull
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
+
+    @NotNull
+    @Column(name = "email", nullable = false)
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     private Gender gender;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "marital_status", nullable = false)
+    @Column(name = "marital_status")
     private MaritalStatus maritalStatus;
 
-    @Column(name = "dependent_amount", nullable = false)
+    @Column(name = "dependent_amount")
     private Integer dependentAmount;
 
     @Type(type = "jsonb")
@@ -62,6 +65,6 @@ public class Client {
     @Column(name = "employment", columnDefinition = "jsonb")
     private Employment employment;
 
-    @Column(name = "account_number", nullable = false)
+    @Column(name = "account_number")
     private String accountNumber;
 }

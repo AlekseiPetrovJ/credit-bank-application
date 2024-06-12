@@ -25,17 +25,22 @@ public class Statement {
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "credit_id")
     private Credit credit;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private ApplicationStatus status;
+
+    @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
     @Type(type = "jsonb")
     @Column(name = "applied_offer", columnDefinition = "jsonb")
     private String appliedOffer;
 
+    @Column(name = "sign_date")
     private LocalDateTime signDate;
 
     @Type(type = "jsonb")
