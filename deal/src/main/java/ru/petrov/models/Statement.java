@@ -38,7 +38,7 @@ public class Statement {
 
     @Type(type = "jsonb")
     @Column(name = "applied_offer", columnDefinition = "jsonb")
-    private String appliedOffer;
+    private LoanOffer appliedOffer;
 
     @Column(name = "sign_date")
     private LocalDateTime signDate;
