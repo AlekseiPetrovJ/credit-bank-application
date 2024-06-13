@@ -17,6 +17,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Entity
 @Table(name = "client")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)

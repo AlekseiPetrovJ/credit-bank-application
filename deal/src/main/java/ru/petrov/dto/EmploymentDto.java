@@ -1,7 +1,9 @@
 package ru.petrov.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.petrov.models.enums.EmploymentStatus;
 import ru.petrov.models.enums.Position;
 
@@ -12,24 +14,26 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class EmploymentDto {
     @NotNull
     @Schema(example = "SELF_EMPLOYED")
-    private final EmploymentStatus employmentStatus;
+    private EmploymentStatus employmentStatus;
     @NotBlank
-    private final String employerINN;
+    private String employerINN;
     @NotNull
     @DecimalMin(value = "0.0")
     @Schema(example = "50000")
-    private final BigDecimal salary;
+    private BigDecimal salary;
     @NotNull
-    private final Position position;
-    @NotNull
-    @Min(0)
-    @Schema(example = "36")
-    private final Integer workExperienceTotal;
+    private Position position;
     @NotNull
     @Min(0)
     @Schema(example = "36")
-    private final Integer workExperienceCurrent;
+    private Integer workExperienceTotal;
+    @NotNull
+    @Min(0)
+    @Schema(example = "36")
+    private Integer workExperienceCurrent;
 }

@@ -21,11 +21,11 @@ public class Statement {
     @Column(name = "statement_id", nullable = false)
     private UUID statementId;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(optional = false)
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "credit_id")
     private Credit credit;
 

@@ -6,6 +6,7 @@ import ru.petrov.models.enums.CreditStatus;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Entity
 public class Credit {
     @Id
@@ -26,9 +28,12 @@ public class Credit {
 
     @Type(type = "jsonb")
     @Column(name = "payment_schedule", columnDefinition = "jsonb")
-    private String paymentSchedule;
+    private List<PaymentScheduleElement> paymentSchedule;
     private Boolean insuranceEnabled;
     private Boolean salaryClient;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "credit_status")
     private CreditStatus creditStatus;
 
 }

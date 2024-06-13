@@ -1,14 +1,11 @@
 package ru.petrov.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ru.petrov.models.enums.ChangeType;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 public class StatusHistory {
     private String status;

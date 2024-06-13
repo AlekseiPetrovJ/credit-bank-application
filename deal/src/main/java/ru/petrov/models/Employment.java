@@ -2,6 +2,7 @@ package ru.petrov.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.petrov.models.enums.EmploymentStatus;
 import ru.petrov.models.enums.Position;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Employment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

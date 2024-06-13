@@ -1,4 +1,4 @@
-package ru.petrov.dto;
+package ru.petrov.models;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
-public class PaymentScheduleElementDto {
+public class PaymentScheduleElement {
     private Integer number;
     private LocalDate date;
     private BigDecimal totalPayment;
