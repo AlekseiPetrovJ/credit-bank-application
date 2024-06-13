@@ -118,7 +118,7 @@ public class CalculatorServiceImpl implements CalculatorService {
             if (scoringDataDto.getEmployment().getEmploymentStatus()==(BUSINESS_OWNER))
                 resultRate = resultRate.add(scoringProps.getBusinessOwnerPoints());
 
-            if (scoringDataDto.getEmployment().getPosition()==(Position.MIDDLE_MANAGER))
+            if (scoringDataDto.getEmployment().getPosition()==(Position.MID_MANAGER))
                 resultRate = resultRate.subtract(scoringProps.getMiddleManagerPoints());
             if (scoringDataDto.getEmployment().getPosition()==(Position.TOP_MANAGER))
                 resultRate = resultRate.subtract(scoringProps.getTopManagerPoints());

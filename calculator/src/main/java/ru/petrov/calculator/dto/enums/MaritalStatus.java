@@ -6,5 +6,5 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum MaritalStatus {
-    MARRIED, DIVORCED
+    MARRIED, DIVORCED, SINGLE, WIDOW_WIDOWER
 }
