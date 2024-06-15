@@ -34,7 +34,7 @@ public class DealService {
         return saved;
     }
     @Transactional
-    public Statement createStatement(Client client) {
+    public Statement saveStatement(Client client) {
         Statement statement = statementRepository.save(new Statement().builder()
                 .client(client)
                 .creationDate(LocalDateTime.now())
@@ -51,7 +51,7 @@ public class DealService {
         StatusHistory statusHistory = new StatusHistory("LoanOffer " + loanOffer + "was select",
                 LocalDateTime.now(), ChangeType.AUTOMATIC);
         statement.setAppliedOffer(loanOffer);
-        statement.setStatus(ApplicationStatus.CC_APPROVED);
+        statement.setStatus(ApplicationStatus.APPROVED);
         statement.setStatusHistory(statusHistory);
         statementRepository.save(statement);
         log.info("Statement {} was saved}", statement);
@@ -96,12 +96,12 @@ public class DealService {
     }
 
     @Transactional
-    public void saveCredit(UUID uuid, Credit credit) {
+    public void saveCredit(UUID statementUuid, Credit credit) {
         credit.setCreditStatus(CreditStatus.CALCULATED);
         Credit saveCredit = creditRepository.save(credit);
         log.info("Credit {} was saved}", saveCredit);
 
-        Statement statement = getStatementById(uuid);
+        Statement statement = getStatementById(statementUuid);
         statement.setCredit(saveCredit);
         statement.setStatus(ApplicationStatus.DOCUMENT_CREATED);
         statement.setStatusHistory(new StatusHistory("Credit " + saveCredit + "was calculated",

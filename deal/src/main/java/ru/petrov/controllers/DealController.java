@@ -41,7 +41,7 @@ public class DealController {
 
         Client client = mapper.map(requestDto, Client.class);
         Client savedClient = dealService.saveClient(client);
-        Statement statement = dealService.createStatement(savedClient);
+        Statement statement = dealService.saveStatement(savedClient);
 
         HttpEntity<LoanStatementRequestDto> entity = new HttpEntity<>(requestDto, headers);
         ParameterizedTypeReference<List<LoanOfferDto>> responseTypeRef = new ParameterizedTypeReference<List<LoanOfferDto>>() {};
