@@ -22,7 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
-public class DealService {
+public class DealServiceImpl {
     private final ClientRepository clientRepository;
     private final StatementRepository statementRepository;
     private final CreditRepository creditRepository;

@@ -1,4 +1,4 @@
-package ru.petrov.controllers;
+package ru.petrov.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import ru.petrov.models.Client;
 import ru.petrov.models.Credit;
 import ru.petrov.models.LoanOffer;
 import ru.petrov.models.Statement;
-import ru.petrov.services.DealService;
+import ru.petrov.services.DealServiceImpl;
 import ru.petrov.util.exceptions.StatementNotFoundException;
 
 import javax.validation.Valid;
@@ -27,7 +27,7 @@ import java.util.UUID;
 public class DealController {
 
 
-    private final DealService dealService;
+    private final DealServiceImpl dealService;
     private final RestTemplate rest;
     private final ModelMapper mapper;
 
