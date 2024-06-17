@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-@Controller
+@RestController
 @RequestMapping(path = "/deal", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class DealController {
