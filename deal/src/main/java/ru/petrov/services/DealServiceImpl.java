@@ -2,7 +2,9 @@ package ru.petrov.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import ru.petrov.dto.*;
 import ru.petrov.models.*;
 import ru.petrov.models.enums.ApplicationStatus;
 import ru.petrov.models.enums.ChangeType;
@@ -26,17 +28,21 @@ public class DealServiceImpl implements DealService {
     private final ClientRepository clientRepository;
     private final StatementRepository statementRepository;
     private final CreditRepository creditRepository;
+    private final ModelMapper mapper;
+
 
     @Transactional
     public Client saveClient(Client client) {
+
         Client saved = clientRepository.save(client);
         log.info("Client {} was saved}", saved);
         return saved;
     }
+
     @Transactional
-    public Statement saveStatement(Client client) {
+    public Statement saveStatement(LoanStatementRequestDto requestDto) {
         Statement statement = statementRepository.save(new Statement().builder()
-                .client(client)
+                .client(saveClient(mapper.map(requestDto, Client.class)))
                 .creationDate(LocalDateTime.now())
                 .build());
         log.info("Statement {} was saved}", statement);
@@ -44,18 +50,19 @@ public class DealServiceImpl implements DealService {
     }
 
     @Transactional
-    public LoanOffer selectOffer(LoanOffer loanOffer){
-        Statement statement = getStatementById(loanOffer.getStatementId());
-        log.info("LoanOffer {} was select for Statement {}}", loanOffer, statement);
+    public LoanOfferDto selectOffer(LoanOfferDto loanOfferDto){
 
-        StatusHistory statusHistory = new StatusHistory("LoanOffer " + loanOffer + "was select",
+        Statement statement = getStatementById(loanOfferDto.getStatementId());
+        log.info("LoanOffer {} was select for Statement {}}", loanOfferDto, statement);
+
+        StatusHistory statusHistory = new StatusHistory("LoanOffer " + loanOfferDto + "was select",
                 LocalDateTime.now(), ChangeType.AUTOMATIC);
-        statement.setAppliedOffer(loanOffer);
+        statement.setAppliedOffer(mapper.map(loanOfferDto, LoanOffer.class));
         statement.setStatus(ApplicationStatus.APPROVED);
         statement.setStatusHistory(statusHistory);
         statementRepository.save(statement);
         log.info("Statement {} was saved}", statement);
-        return loanOffer;
+        return loanOfferDto;
     }
 
     public Statement getStatementById(UUID uuid) {
@@ -71,7 +78,8 @@ public class DealServiceImpl implements DealService {
     }
 
     @Transactional
-    public Client fillClientInStatementAdditionalData(UUID statementUuid, Client additionalDataClient) {
+    public Client fillClientInStatementAdditionalData(UUID statementUuid, FinishRegistrationRequestDto finishRequest) {
+        Client additionalDataClient = mapper.map(finishRequest, Client.class);
         Client client = getClientByStatementId(statementUuid);
         fillClientAdditionalData(additionalDataClient, client);
         return clientRepository.save(client);
@@ -96,7 +104,8 @@ public class DealServiceImpl implements DealService {
     }
 
     @Transactional
-    public void saveCredit(UUID statementUuid, Credit credit) {
+    public void saveCredit(UUID statementUuid, CreditDto creditDto) {
+        Credit credit = mapper.map(creditDto, Credit.class);
         credit.setCreditStatus(CreditStatus.CALCULATED);
         Credit saveCredit = creditRepository.save(credit);
         log.info("Credit {} was saved}", saveCredit);
@@ -108,5 +117,17 @@ public class DealServiceImpl implements DealService {
                 LocalDateTime.now(), ChangeType.AUTOMATIC));
         statementRepository.save(statement);
         log.info("Statement {} was saved}", statement);
+    }
+
+    public ScoringDataDto finishCalculationLoan(UUID uuid, FinishRegistrationRequestDto finishRequest) {
+        Client client = fillClientInStatementAdditionalData(uuid, finishRequest);
+        ScoringDataDto scoringDataDto = mapper.map(client, ScoringDataDto.class);
+        LoanOffer appliedOffer = getOfferByStatementId(uuid);
+        //todo Облагородить. Возможно через mapper
+        scoringDataDto.setAmount(appliedOffer.getRequestedAmount());
+        scoringDataDto.setTerm(appliedOffer.getTerm());
+        scoringDataDto.setIsInsuranceEnabled(appliedOffer.getIsInsuranceEnabled());
+        scoringDataDto.setIsSalaryClient(appliedOffer.getIsSalaryClient());
+        return scoringDataDto;
     }
 }
