@@ -7,7 +7,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import ru.petrov.dto.*;
-import ru.petrov.services.DealServiceImpl;
+import ru.petrov.services.DealService;
 import ru.petrov.util.exceptions.StatementNotFoundException;
 
 import javax.validation.Valid;
@@ -20,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DealController {
     private static final String CALCULATOR_URL = "http://127.0.0.1:8080";
-    private final DealServiceImpl dealService;
+    private final DealService dealService;
     private final RestTemplate rest;
 
     @PostMapping("/statement")
