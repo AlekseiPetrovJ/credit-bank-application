@@ -16,8 +16,6 @@ import ru.petrov.models.*;
 import ru.petrov.models.enums.ApplicationStatus;
 import ru.petrov.models.enums.CreditStatus;
 import ru.petrov.models.enums.MaritalStatus;
-import ru.petrov.repositories.ClientRepository;
-import ru.petrov.repositories.CreditRepository;
 import ru.petrov.repositories.StatementRepository;
 import ru.petrov.util.exceptions.StatementNotFoundException;
 
@@ -124,7 +122,7 @@ class DealServiceTest {
                 () -> assertNotNull(updatedStatement),
                 () -> assertThat(savedCredit).usingRecursiveComparison().isEqualTo(updatedStatement.getCredit()),
                 () -> assertEquals(ApplicationStatus.DOCUMENT_CREATED, updatedStatement.getStatus()),
-                () -> assertNotNull(updatedStatement.getStatusHistory())
+                () -> assertTrue(updatedStatement.getStatusHistory().size()>0)
         );
     }
 

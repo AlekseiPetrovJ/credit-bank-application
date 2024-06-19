@@ -55,11 +55,10 @@ public class DealServiceImpl implements DealService {
         Statement statement = getStatementById(loanOfferDto.getStatementId());
         log.info("LoanOffer {} was select for Statement {}}", loanOfferDto, statement);
 
-        StatusHistory statusHistory = new StatusHistory("LoanOffer " + loanOfferDto + "was select",
-                LocalDateTime.now(), ChangeType.AUTOMATIC);
         statement.setAppliedOffer(mapper.map(loanOfferDto, LoanOffer.class));
         statement.setStatus(ApplicationStatus.APPROVED);
-        statement.setStatusHistory(statusHistory);
+        statement.getStatusHistory().add(new StatusHistory("LoanOffer " + loanOfferDto + "was select",
+                LocalDateTime.now(), ChangeType.AUTOMATIC));
         statementRepository.save(statement);
         log.info("Statement {} was saved}", statement);
         return loanOfferDto;
@@ -113,7 +112,7 @@ public class DealServiceImpl implements DealService {
         Statement statement = getStatementById(statementUuid);
         statement.setCredit(saveCredit);
         statement.setStatus(ApplicationStatus.DOCUMENT_CREATED);
-        statement.setStatusHistory(new StatusHistory("Credit " + saveCredit + "was calculated",
+        statement.getStatusHistory().add(new StatusHistory("Credit " + saveCredit + "was calculated",
                 LocalDateTime.now(), ChangeType.AUTOMATIC));
         statementRepository.save(statement);
         log.info("Statement {} was saved}", statement);

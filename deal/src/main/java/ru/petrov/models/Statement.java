@@ -6,6 +6,8 @@ import ru.petrov.models.enums.ApplicationStatus;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -47,7 +49,8 @@ public class Statement {
     @Column(name = "ses_code", columnDefinition = "jsonb")
     private String sesCode;
 
+    @Getter(lazy = true)
     @Type(type = "jsonb")
     @Column(name = "status_history", columnDefinition = "jsonb")
-    private StatusHistory statusHistory;
+    private final List<StatusHistory> statusHistory = new ArrayList<>();
 }
