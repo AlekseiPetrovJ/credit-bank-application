@@ -7,6 +7,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import ru.petrov.dto.*;
+import ru.petrov.models.Statement;
 import ru.petrov.services.DealService;
 import ru.petrov.util.exceptions.StatementNotFoundException;
 
@@ -27,6 +28,7 @@ public class DealController {
     @ResponseStatus(code = HttpStatus.CREATED)
     public ResponseEntity<List<LoanOfferDto>> createStatement(@RequestBody @Valid LoanStatementRequestDto requestDto) {
         log.info("POST request {} path {}", requestDto, "/deal/statement");
+        Statement statement = dealService.saveStatement(requestDto);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -38,7 +40,7 @@ public class DealController {
         if (response.getStatusCode()==HttpStatus.OK){
             List<LoanOfferDto> loanOffersDto = response.getBody();
             loanOffersDto.forEach(loanOfferDto -> loanOfferDto.
-                    setStatementId(dealService.saveStatement(requestDto).getStatementId()));
+                    setStatementId(statement.getStatementId()));
             log.info("POST response to path {} was CREATED", "/deal/statement");
 
             return new ResponseEntity<>(loanOffersDto, HttpStatus.CREATED);
