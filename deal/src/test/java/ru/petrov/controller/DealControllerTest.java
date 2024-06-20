@@ -6,14 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.client.RestTemplate;
 import ru.petrov.DealApplicationTest;
 import ru.petrov.dto.LoanOfferDto;
 import ru.petrov.dto.LoanStatementRequestDto;
 import ru.petrov.models.Statement;
 import ru.petrov.services.DealService;
+import ru.petrov.util.RestUtil;
 import ru.petrov.util.exceptions.StatementNotFoundException;
 
 import java.util.List;
@@ -29,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(DealController.class)
 class DealControllerTest extends DealApplicationTest {
     @MockBean
-    RestTemplate rest;
+    RestUtil restUtil;
     @MockBean
     DealService dealService;
 
@@ -45,10 +47,9 @@ class DealControllerTest extends DealApplicationTest {
         List<LoanOfferDto> listLoanOffersDto = getObjectMapper().readValue(stringLoanOffersDto,
                 getObjectMapper().getTypeFactory().constructCollectionType(List.class, LoanOfferDto.class));
         ResponseEntity<List<LoanOfferDto>> responseEntity = new ResponseEntity<>(listLoanOffersDto, HttpStatus.OK);
-        when(rest.exchange(
+        when(restUtil.exchangeDtoToEntity(
                 anyString(),
-                any(HttpMethod.class),
-                any(HttpEntity.class),
+                any(Object.class),
                 any(ParameterizedTypeReference.class)
         )).thenReturn(responseEntity);
         Statement statement = new Statement().builder()
