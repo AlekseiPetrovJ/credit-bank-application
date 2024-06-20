@@ -80,18 +80,8 @@ public class DealServiceImpl implements DealService {
     public Client fillClientInStatementAdditionalData(UUID statementUuid, FinishRegistrationRequestDto finishRequest) {
         Client additionalDataClient = mapper.map(finishRequest, Client.class);
         Client client = getClientByStatementId(statementUuid);
-        fillClientAdditionalData(additionalDataClient, client);
+        mapper.map(additionalDataClient, client);
         return clientRepository.save(client);
-    }
-
-    private void fillClientAdditionalData(Client sourceClient, Client destinationClient) {
-        destinationClient.setGender(sourceClient.getGender());
-        destinationClient.setMaritalStatus(sourceClient.getMaritalStatus());
-        destinationClient.setDependentAmount(sourceClient.getDependentAmount());
-        destinationClient.getPassport().setIssueDate(sourceClient.getPassport().getIssueDate());
-        destinationClient.getPassport().setIssueBranch(sourceClient.getPassport().getIssueBranch());
-        destinationClient.setEmployment(sourceClient.getEmployment());
-        destinationClient.setAccountNumber(sourceClient.getAccountNumber());
     }
 
     public LoanOffer getOfferByStatementId(UUID uuid) {
@@ -122,11 +112,7 @@ public class DealServiceImpl implements DealService {
         Client client = fillClientInStatementAdditionalData(uuid, finishRequest);
         ScoringDataDto scoringDataDto = mapper.map(client, ScoringDataDto.class);
         LoanOffer appliedOffer = getOfferByStatementId(uuid);
-        //todo Облагородить. Возможно через mapper
-        scoringDataDto.setAmount(appliedOffer.getRequestedAmount());
-        scoringDataDto.setTerm(appliedOffer.getTerm());
-        scoringDataDto.setIsInsuranceEnabled(appliedOffer.getIsInsuranceEnabled());
-        scoringDataDto.setIsSalaryClient(appliedOffer.getIsSalaryClient());
+        mapper.map(appliedOffer,scoringDataDto);
         return scoringDataDto;
     }
 }
