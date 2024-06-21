@@ -16,6 +16,7 @@
 
 	<modules>
 		<module>calculator</module>
-	</modules>
+        <module>statement</module>
+    </modules>
 
 </project>
