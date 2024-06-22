@@ -1,0 +1,17 @@
+  {
+    "email": "ivan@mail.ru",
+      "employment": {
+          "employmentId": "5c7772ab-cf86-4851-b100-e395bbc26a8c",
+          "status": "SELF_EMPLOYED",
+          "employerInn": "123123123",
+          "salary": 50000,
+          "position": "MID_MANAGER",
+          "workExperienceTotal": 36,
+          "workExperienceCurrent": 36
+      },
+    "birthDate": "2000-01-02",
+    "lastName": "Petrov",
+    "firstName": "Ivan",
+    "middleName": "Kuzmich",
+    "maritalStatus": "DIVORCED"
+  }
