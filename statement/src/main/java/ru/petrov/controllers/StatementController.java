@@ -6,10 +6,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import ru.petrov.config.CommonProps;
 import ru.petrov.dto.LoanOfferDto;
 import ru.petrov.dto.LoanStatementRequestDto;
@@ -27,6 +25,7 @@ import java.util.List;
 public class StatementController {
     private final CommonProps commonProps;
     private final RestUtil restUtil;
+    private final RestTemplate rest;
 
 
     @PostMapping("/offers")
@@ -43,8 +42,7 @@ public class StatementController {
                     new ParameterizedTypeReference<>() {
                     });
             if (response.getStatusCode().is2xxSuccessful()) {
-                List<LoanOfferDto> loanOfferDtos = response.getBody();
-                log.info("Get {} from {}", loanOfferDtos, fullDealUrl);
+                log.info("Get {} from {}", response, fullDealUrl);
                 return response;
             } else {
                 log.info("Get status code {} from {}", response.getStatusCode(), fullDealUrl);
@@ -56,6 +54,27 @@ public class StatementController {
         } catch (Exception e) {
             log.error(" Exception error {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/offer")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity selectOffer(@RequestBody LoanOfferDto loanOfferDto) {
+        log.info("POST request {} path /offer", loanOfferDto);
+        try {
+            String fullDealUrl = commonProps.getDealUrl() + "/deal/offer/select";
+            ResponseEntity<Void> response = rest.postForEntity(fullDealUrl, loanOfferDto, Void.class);
+            log.info("Get status code {} from {}", response.getStatusCode(), fullDealUrl);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return response;
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
     }
 }
