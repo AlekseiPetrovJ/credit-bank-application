@@ -40,7 +40,7 @@ public class StatementController {
 
             ResponseEntity<List<LoanOfferDto>> response = restUtil.exchangeDtoToEntity(fullDealUrl,
                     requestDto,
-                    new ParameterizedTypeReference<List<LoanOfferDto>>() {
+                    new ParameterizedTypeReference<>() {
                     });
             if (response.getStatusCode().is2xxSuccessful()) {
                 List<LoanOfferDto> loanOfferDtos = response.getBody();
