@@ -1,6 +1,8 @@
 spring:
   application:
     name: calculator
+server:
+  port: 8080
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

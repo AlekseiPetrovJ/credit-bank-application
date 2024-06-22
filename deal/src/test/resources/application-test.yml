@@ -1,0 +1,25 @@
+spring:
+  config:
+    activate:
+      on-profile: "test"
+  jpa:
+    hibernate:
+#            ddl-auto: validate
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
+    show-sql: true
+  datasource:
+    driver: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/deal_test
+    username: deal_test
+    password: deal_test
+server:
+  port: 8081
+
+
+
+
+
+

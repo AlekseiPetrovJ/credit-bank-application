@@ -1,4 +1,4 @@
-package ru.petrov.calculator.dto.enums;
+package ru.petrov.models.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,0 +1,38 @@
+[
+  {
+    "requestedAmount": 35000,
+    "totalAmount": 37194.236906925,
+    "term": 6,
+    "monthlyPayment": 6199.0394844875,
+    "rate": 12.5,
+    "isInsuranceEnabled": true,
+    "isSalaryClient": true
+  },
+  {
+    "requestedAmount": 35000,
+    "totalAmount": 37300.746093975,
+    "term": 6,
+    "monthlyPayment": 6216.7910156625,
+    "rate": 13.5,
+    "isInsuranceEnabled": true,
+    "isSalaryClient": false
+  },
+  {
+    "requestedAmount": 35000,
+    "totalAmount": 36599.212503,
+    "term": 6,
+    "monthlyPayment": 6099.8687505,
+    "rate": 15.5,
+    "isInsuranceEnabled": false,
+    "isSalaryClient": true
+  },
+  {
+    "requestedAmount": 35000,
+    "totalAmount": 36703.541448,
+    "term": 6,
+    "monthlyPayment": 6117.256908,
+    "rate": 16.5,
+    "isInsuranceEnabled": false,
+    "isSalaryClient": false
+  }
+]
