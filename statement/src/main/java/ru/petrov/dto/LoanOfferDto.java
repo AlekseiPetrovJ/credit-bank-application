@@ -1,24 +1,28 @@
 package ru.petrov.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class LoanOfferDto {
-    private final UUID statementId;
-    private final BigDecimal requestedAmount;
-    private final BigDecimal totalAmount;
+    private UUID statementId;
+    private BigDecimal requestedAmount;
+    private BigDecimal totalAmount;
     /**
      * Срок кредита в месяцах
      */
-    private final Integer term;
-    private final BigDecimal monthlyPayment;
+    private Integer term;
+    private BigDecimal monthlyPayment;
     /**
      * Ставка по кредиту — годовой процент за использование заёмных денег
      */
-    private final BigDecimal rate;
-    private final Boolean isInsuranceEnabled;
-    private final Boolean isSalaryClient;
+    private BigDecimal rate;
+    private Boolean isInsuranceEnabled;
+    private Boolean isSalaryClient;
 }
