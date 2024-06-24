@@ -1,0 +1,9 @@
+  {
+    "requestedAmount": 35000,
+    "totalAmount": 37194.236906925,
+    "term": 6,
+    "monthlyPayment": 6199.0394844875,
+    "rate": 12.5,
+    "isInsuranceEnabled": true,
+    "isSalaryClient": true
+  }
