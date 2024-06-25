@@ -55,7 +55,7 @@ class StatementControllerTest extends StatementApplicationTest {
                 any(ParameterizedTypeReference.class)
         )).thenReturn(responseEntity);
 
-        mvc.perform(post("/statement/offers")
+        mvc.perform(post("/statement")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(request)))
                 .andExpect(status().isOk())
@@ -75,7 +75,7 @@ class StatementControllerTest extends StatementApplicationTest {
                 any(ParameterizedTypeReference.class)
         )).thenReturn(responseEntity);
 
-        mvc.perform(post("/statement/offers")
+        mvc.perform(post("/statement")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(request)))
                 .andExpect(status().isBadRequest());
@@ -93,7 +93,7 @@ class StatementControllerTest extends StatementApplicationTest {
                 any(ParameterizedTypeReference.class)
         )).thenThrow(RestClientException.class);
 
-        mvc.perform(post("/statement/offers")
+        mvc.perform(post("/statement")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(request)))
                 .andExpect(status().isInternalServerError());
@@ -115,7 +115,7 @@ class StatementControllerTest extends StatementApplicationTest {
                 any(ParameterizedTypeReference.class)
         )).thenReturn(responseEntity);
 
-        mvc.perform(post("/statement/offers")
+        mvc.perform(post("/statement")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(request)))
                 .andExpect(status().isInternalServerError());

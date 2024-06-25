@@ -28,9 +28,9 @@ public class StatementController {
     private final RestTemplate rest;
 
 
-    @PostMapping("/offers")
+    @PostMapping()
     public ResponseEntity<List<LoanOfferDto>> offers(@RequestBody @Valid LoanStatementRequestDto requestDto) {
-        log.info("POST request {} path {}", requestDto, "/statement/offers");
+        log.info("POST request {} path {}", requestDto, "/statement");
         try {
             Validator.validateAgeOlder18(requestDto);
             log.info("successfully passed validation {}", requestDto);
