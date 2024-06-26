@@ -18,6 +18,7 @@
 		<module>calculator</module>
         <module>statement</module>
 		<module>deal</module>
+		<module>dossier</module>
 	</modules>
 
 </project>
