@@ -1,0 +1,19 @@
+spring:
+  profiles:
+    active: "development"
+---
+spring:
+  config:
+    activate:
+      on-profile: "development"
+  application:
+    name: statement
+server:
+  port: 8082
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
+  statement:
+    dealUrl: http://127.0.0.1:8081

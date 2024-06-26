@@ -16,6 +16,7 @@
 
 	<modules>
 		<module>calculator</module>
+        <module>statement</module>
 		<module>deal</module>
 	</modules>
 

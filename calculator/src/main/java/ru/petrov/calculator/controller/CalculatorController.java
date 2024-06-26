@@ -33,8 +33,9 @@ public class CalculatorController {
         try {
             Validator.validateAgeOlder18(requestDto);
             log.info("successfully passed validation {}", requestDto);
-            log.info("POST response {}", new ResponseEntity<>(calculatorService.preScoring(requestDto), HttpStatus.OK));
-            return new ResponseEntity<>(calculatorService.preScoring(requestDto), HttpStatus.OK);
+            ResponseEntity<List<LoanOfferDto>> response = new ResponseEntity<>(calculatorService.preScoring(requestDto), HttpStatus.OK);
+            log.info("POST response {}", response);
+            return response;
         } catch (NotValidDto e) {
             log.error("NotValidDto error {} ", e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -55,8 +56,9 @@ public class CalculatorController {
                 log.info("Отказ в предоставлении кредита. creditDto = {}", creditDto);
                 throw new NotValidDto("Отказ в предоставлении кредита");
             }
-            log.info("POST response {}", new ResponseEntity<>(creditDto, HttpStatus.OK));
-            return new ResponseEntity<>(creditDto, HttpStatus.OK);
+            ResponseEntity<CreditDto> response = new ResponseEntity<>(creditDto, HttpStatus.OK);
+            log.info("POST response {}", response);
+            return response;
         } catch (NotValidDto e) {
             log.error("NotValidDto error {} ", e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
