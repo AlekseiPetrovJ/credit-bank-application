@@ -2,6 +2,6 @@ package ru.petrov.services;
 
 import ru.petrov.dto.EmailMessageDto;
 
-public interface EmailMessagingService {
+public interface MessagingService {
     void send (EmailMessageDto messageDto);
 }

@@ -32,7 +32,7 @@ public class DealServiceImpl implements DealService {
     private final StatementRepository statementRepository;
     private final CreditRepository creditRepository;
     private final ModelMapper mapper;
-    private final EmailMessagingService emailMessagingService;
+    private final MessagingService messagingService;
 
 
     @Transactional
@@ -168,7 +168,7 @@ public class DealServiceImpl implements DealService {
         EmailMessageDto messageDto = new EmailMessageDto(statement.getClient().getEmail(),
                 status,
                 statement.getStatementId());
-        emailMessagingService.send(messageDto);
+        messagingService.send(messageDto);
         log.info("EmailMessage {} sent", messageDto);
     }
 }

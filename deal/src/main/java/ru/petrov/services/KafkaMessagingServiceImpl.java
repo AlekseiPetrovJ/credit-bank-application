@@ -7,7 +7,7 @@ import ru.petrov.dto.EmailMessageDto;
 
 @Service
 @RequiredArgsConstructor
-public class KafkaEmailMessagingServiceImpl implements EmailMessagingService{
+public class KafkaMessagingServiceImpl implements MessagingService {
     private final KafkaTemplate<String, EmailMessageDto> kafkaTemplate;
 
     @Override

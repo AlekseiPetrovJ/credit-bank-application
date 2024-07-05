@@ -21,10 +21,7 @@ import ru.petrov.dto.EmailMessageDto;
 import ru.petrov.dto.LoanOfferDto;
 import ru.petrov.dto.LoanStatementRequestDto;
 import ru.petrov.models.Client;
-import ru.petrov.models.Credit;
 import ru.petrov.models.Statement;
-import ru.petrov.models.enums.ApplicationStatus;
-import ru.petrov.models.enums.CreditStatus;
 import ru.petrov.repositories.StatementRepository;
 import ru.petrov.util.exceptions.StatementNotFoundException;
 
@@ -49,7 +46,7 @@ class DealServiceTest extends DealApplicationTest {
     private ModelMapper mapper;
 
     @Mock
-    private EmailMessagingService emailMessagingService;
+    private MessagingService messagingService;
     KafkaTemplate<String, EmailMessageDto> kafkaTemplate = Mockito.mock(KafkaTemplate.class);
 
     private Client client;
