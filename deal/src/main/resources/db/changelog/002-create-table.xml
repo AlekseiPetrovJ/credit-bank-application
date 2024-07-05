@@ -56,7 +56,7 @@
         </column>
         <column name="applied_offer" type="jsonb"/>
         <column name="creation_date" type="timestamp"/>
-        <column name="ses_code" type="jsonb"/>
+        <column name="ses_code" type="varchar(255)"/>
         <column name="sign_date" type="timestamp"/>
         <column name="status" type="varchar(255)">
             <constraints nullable="true"/>
