@@ -23,7 +23,7 @@ import java.util.UUID;
 @RequestMapping(path = "/deal", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class DealController {
-    private static final String CALCULATOR_URL = "http://127.0.0.1:8080";
+    private static final String CALCULATOR_URL = "http://127.0.0.1:8084";
     private final DealService dealService;
     private final RestUtil restUtil;
 
