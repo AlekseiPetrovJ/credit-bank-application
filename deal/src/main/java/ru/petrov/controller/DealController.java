@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.petrov.dto.*;
 import ru.petrov.models.Statement;
+import ru.petrov.models.enums.ApplicationStatus;
 import ru.petrov.services.DealService;
 import ru.petrov.util.RestUtil;
 import ru.petrov.util.exceptions.StatementNotFoundException;
@@ -65,6 +66,8 @@ public class DealController {
     @ResponseStatus(code = HttpStatus.OK)
     public ResponseEntity setScoring(@PathVariable("statementId") UUID uuid,
                                               @RequestBody @Valid FinishRegistrationRequestDto finishRequest) {
+        log.info("POST request {} to path /calculate/{}", finishRequest, uuid);
+
         try {
             ScoringDataDto scoringDataDto = dealService.finishCalculationLoan(uuid, finishRequest);
 
@@ -74,6 +77,8 @@ public class DealController {
                     });
             if (response.getStatusCode() == HttpStatus.OK) {
                 dealService.saveCredit(uuid, response.getBody());
+                log.info("POST request {} to path /calculate/{} returned OK", finishRequest, uuid);
+
                 return new ResponseEntity(HttpStatus.OK);
             } else {
                 log.error("Get some error from other MC calculator/calc");
@@ -81,6 +86,58 @@ public class DealController {
             }
         } catch (StatementNotFoundException e) {
             log.info("POST response to path /calculate/{} was NOT_FOUND", uuid);
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/document/{statementId}/send")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity sendDocument(@PathVariable("statementId") UUID uuid) {
+        log.info("POST response to path /document/{}/send", uuid);
+
+        try {
+            dealService.sendDocument(uuid);
+            log.info("POST response to path /document/{}/send returned OK", uuid);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (StatementNotFoundException e) {
+            log.error("POST response to path /document/{}/send was NOT_FOUND", uuid);
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/admin/statement/{statementId}/status")
+    public ResponseEntity updateDocument(@PathVariable("statementId") UUID uuid) {
+        log.info("PUT response to path /document/{}/status", uuid);
+        try {
+            dealService.updateStatementStatus(uuid, ApplicationStatus.DOCUMENT_CREATED);
+            log.info("PUT to path /document/{}/status returned HttpStatus.OK");
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (StatementNotFoundException e) {
+            log.error("PUT response to path /document/{}/status was NOT_FOUND", uuid);
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/document/{statementId}/sign")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity signDocument(@PathVariable("statementId") UUID uuid) {
+        try {
+            dealService.signDocument(uuid);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (StatementNotFoundException e) {
+            log.error("POST response to path /document/{}/sign was NOT_FOUND", uuid);
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/document/{statementId}/code")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity codeDocument(@PathVariable("statementId") UUID uuid) {
+        try {
+            dealService.codeDocument(uuid);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (StatementNotFoundException e) {
+            log.error("POST response to path /document/{}/code was NOT_FOUND", uuid);
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
     }

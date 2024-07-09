@@ -45,12 +45,11 @@ public class Statement {
     @Column(name = "sign_date")
     private LocalDateTime signDate;
 
-    @Type(type = "jsonb")
-    @Column(name = "ses_code", columnDefinition = "jsonb")
+    @Column(name = "ses_code")
     private String sesCode;
 
-    @Getter(lazy = true)
+//    @Getter(lazy = true)
     @Type(type = "jsonb")
     @Column(name = "status_history", columnDefinition = "jsonb")
-    private final List<StatusHistory> statusHistory = new ArrayList<>();
+    private List<StatusHistory> statusHistory = new ArrayList<>();
 }
