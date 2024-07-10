@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.petrov.dto.*;
 import ru.petrov.models.Statement;
-import ru.petrov.models.enums.ApplicationStatus;
 import ru.petrov.services.DealService;
 import ru.petrov.util.RestUtil;
 import ru.petrov.util.exceptions.StatementNotFoundException;
@@ -101,19 +100,6 @@ public class DealController {
             return new ResponseEntity(HttpStatus.OK);
         } catch (StatementNotFoundException e) {
             log.error("POST response to path /document/{}/send was NOT_FOUND", uuid);
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @PutMapping("/admin/statement/{statementId}/status")
-    public ResponseEntity updateDocument(@PathVariable("statementId") UUID uuid) {
-        log.info("PUT response to path /document/{}/status", uuid);
-        try {
-            dealService.updateStatementStatus(uuid, ApplicationStatus.DOCUMENT_CREATED);
-            log.info("PUT to path /document/{}/status returned HttpStatus.OK");
-            return new ResponseEntity(HttpStatus.OK);
-        } catch (StatementNotFoundException e) {
-            log.error("PUT response to path /document/{}/status was NOT_FOUND", uuid);
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
     }

@@ -19,6 +19,7 @@ import ru.petrov.util.exceptions.StatementNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static ru.petrov.models.enums.ApplicationStatus.*;
@@ -81,6 +82,11 @@ public class DealServiceImpl implements DealService {
             throw new ClientNotFoundException();
         }
         return client;
+    }
+
+    @Override
+    public List<Statement> getAllStatement() {
+        return statementRepository.findAll();
     }
 
     @Transactional

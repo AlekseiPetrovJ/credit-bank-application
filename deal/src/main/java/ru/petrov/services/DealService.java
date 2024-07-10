@@ -5,6 +5,7 @@ import ru.petrov.models.Client;
 import ru.petrov.models.Statement;
 import ru.petrov.models.enums.ApplicationStatus;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface DealService {
@@ -12,6 +13,7 @@ public interface DealService {
     Statement saveStatement(LoanStatementRequestDto requestDto);
     LoanOfferDto selectOffer(LoanOfferDto loanOffer);
     Statement getStatementById(UUID uuid);
+    List<Statement> getAllStatement();
     void saveCredit(UUID statementUuid, CreditDto credit);
     Client getClientByStatementId(UUID uuid);
     ScoringDataDto finishCalculationLoan(UUID uuid, FinishRegistrationRequestDto finishRequest);
