@@ -8,11 +8,8 @@ spring:
       on-profile: "development"
   application:
     name: gateway
-
 server:
   port: 8080
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-  api-docs:
-    path: /api-docs
+gateway:
+  dealUrl: http://127.0.0.1:8081
+  statementUrl: http://127.0.0.1:8082
