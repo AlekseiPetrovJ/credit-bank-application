@@ -1,0 +1,15 @@
+spring:
+  profiles:
+    active: "development"
+---
+spring:
+  config:
+    activate:
+      on-profile: "development"
+  application:
+    name: gateway
+server:
+  port: 8080
+gateway:
+  dealUrl: http://127.0.0.1:8081
+  statementUrl: http://127.0.0.1:8082

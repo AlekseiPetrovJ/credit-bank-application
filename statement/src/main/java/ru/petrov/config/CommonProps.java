@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import java.math.BigDecimal;
 
 @Configuration
-@ConfigurationProperties(prefix="statement.properties")
+@ConfigurationProperties(prefix="statement")
 @Data
 public class CommonProps {
     private String dealUrl = "http://127.0.0.1:8081";
