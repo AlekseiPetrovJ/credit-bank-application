@@ -22,4 +22,16 @@ jobs:
           java-version: 1.11
 
       - name: Build calculator with Maven
-        run: cd ./calculator/ && mvn -B clean package
+        run: cd ./calculator/ && mvn -B clean package dockerfile:build
+
+      - name: Build deal with Maven
+        run: cd ./deal/ && mvn -B clean package dockerfile:build
+
+      - name: Build dossier with Maven
+        run: cd ./dossier/ && mvn -B clean package dockerfile:build
+
+      - name: Build gateway with Maven
+        run: cd ./gateway/ && mvn -B clean package dockerfile:build
+
+      - name: Build statement with Maven
+        run: cd ./statement/ && mvn -B clean package dockerfile:build

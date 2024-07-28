@@ -11,5 +11,5 @@ spring:
 server:
   port: 8080
 gateway:
-  dealUrl: http://127.0.0.1:8081
-  statementUrl: http://127.0.0.1:8082
+  dealUrl: http://deal:8080
+  statementUrl: http://statement:8080

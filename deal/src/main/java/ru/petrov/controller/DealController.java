@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.petrov.config.CommonProps;
 import ru.petrov.dto.*;
 import ru.petrov.models.Statement;
 import ru.petrov.services.DealService;
@@ -22,7 +23,7 @@ import java.util.UUID;
 @RequestMapping(path = "/deal", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class DealController {
-    private static final String CALCULATOR_URL = "http://127.0.0.1:8084";
+    private final CommonProps commonProps;
     private final DealService dealService;
     private final RestUtil restUtil;
 
@@ -31,7 +32,8 @@ public class DealController {
     public ResponseEntity<List<LoanOfferDto>> createStatement(@RequestBody @Valid LoanStatementRequestDto requestDto) {
         log.info("POST request {} path {}", requestDto, "/deal/statement");
         Statement statement = dealService.saveStatement(requestDto);
-        ResponseEntity<List<LoanOfferDto>> response = restUtil.exchangeDtoToEntity(CALCULATOR_URL + "/calculator/offers",
+        ResponseEntity<List<LoanOfferDto>> response = restUtil.exchangeDtoToEntity(commonProps.getCalculatorUrl()
+                        + "/calculator/offers",
                 requestDto,
                 new ParameterizedTypeReference<>() {
                 });
@@ -70,7 +72,8 @@ public class DealController {
         try {
             ScoringDataDto scoringDataDto = dealService.finishCalculationLoan(uuid, finishRequest);
 
-            ResponseEntity<CreditDto> response = restUtil.exchangeDtoToEntity(CALCULATOR_URL + "/calculator/calc",
+            ResponseEntity<CreditDto> response = restUtil.exchangeDtoToEntity(commonProps.getCalculatorUrl()
+                            + "/calculator/calc",
                     scoringDataDto,
                     new ParameterizedTypeReference<>() {
                     });

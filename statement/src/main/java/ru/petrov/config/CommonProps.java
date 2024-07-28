@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @ConfigurationProperties(prefix="statement")
 @Data
 public class CommonProps {
-    private String dealUrl = "http://127.0.0.1:8081";
+    private String dealUrl = "http://deal:8080";
     /**
      * Ставка по кредиту — это годовой процент
      */

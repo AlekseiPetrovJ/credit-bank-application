@@ -16,7 +16,7 @@ spring:
     hibernate:
             ddl-auto: none
 server:
-  port: 8081
+  port: 8080
 
 
 

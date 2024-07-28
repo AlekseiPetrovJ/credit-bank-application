@@ -1,0 +1,54 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:15.5
+    environment:
+      POSTGRES_DB: "deal"
+      POSTGRES_USER: "deal"
+      POSTGRES_PASSWORD: "dealdeal"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: 'bitnami/kafka:latest'
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      zookeeper:
+          condition: service_started
+  calculator:
+    image: petrov/calculator:0.0.1-SNAPSHOT
+    environment:
+      - "SPRING_PROFILES_ACTIVE=development"
+  gateway:
+    image: petrov/gateway:0.0.1-SNAPSHOT
+    environment:
+      - "SPRING_PROFILES_ACTIVE=development"
+    ports:
+      - '8080:8080'
+  dossier:
+    image: petrov/dossier:0.0.1-SNAPSHOT
+    environment:
+      - "SPRING_PROFILES_ACTIVE=development"
+    depends_on:
+      kafka:
+        condition: service_started
+  deal:
+    image: petrov/deal:0.0.1-SNAPSHOT
+    environment:
+      - "SPRING_PROFILES_ACTIVE=development"
+    depends_on:
+      postgres:
+        condition: service_started
+      kafka:
+        condition: service_started
+  statement:
+    image: petrov/statement:0.0.1-SNAPSHOT
+    environment:
+      - "SPRING_PROFILES_ACTIVE=development"
