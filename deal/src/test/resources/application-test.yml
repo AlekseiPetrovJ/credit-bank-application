@@ -2,25 +2,19 @@ spring:
   config:
     activate:
       on-profile: "test"
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  h2:
+    console:
+      enabled: true
   liquibase:
-    enabled: true
-    change-log: classpath:/db/changelog/changelog.xml
+    enabled: false
   jpa:
     hibernate:
-            ddl-auto: validate
-#      ddl-auto: create
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQL9Dialect
-    show-sql: true
-  datasource:
-    driver: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5433/deal_test
-    username: deal_test
-    password: deal_test
-    liquibase:
-      enabled: true
-      change-log: classpath:/db/changelog/changelog.xml
+            ddl-auto: none
 server:
   port: 8081
 
