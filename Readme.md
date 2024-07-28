@@ -1,3 +1,4 @@
+[![credit-bank-application with Maven](https://github.com/AlekseiPetrovJ/credit-bank-application/actions/workflows/maven.yml/badge.svg)](https://github.com/AlekseiPetrovJ/credit-bank-application/actions/workflows/maven.yml)
 # Приложение "Кредитный банк"
 
 Бэкенд-приложение с микросервисной архитектурой - прототип небольшого банка с применением технологий и инструментов:
