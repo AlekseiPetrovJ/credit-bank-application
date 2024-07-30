@@ -29,9 +29,6 @@ jobs:
       - name: Build dossier with Maven
         run: cd ./dossier/ && mvn -B clean verify
 
-      - name: Build gateway with Maven
-        run: cd ./gateway/ && mvn -B clean verify
-
       - name: Build statement with Maven
         run: cd ./statement/ && mvn -B clean verify
 
