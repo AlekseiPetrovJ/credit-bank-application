@@ -1,4 +1,4 @@
-name: credit-bank-application with Maven
+name: codecov
 
 on:
   pull_request:
@@ -7,7 +7,6 @@ on:
   push:
     branches:
       - '*'
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,17 +20,22 @@ jobs:
         with:
           java-version: 1.11
 
-      - name: Build calculator with Maven
-        run: cd ./calculator/ && mvn -B clean package dockerfile:build
+      - name: Maven verify
+        run: cd ./calculator/ && mvn -B clean verify
 
       - name: Build deal with Maven
-        run: cd ./deal/ && mvn -B clean package dockerfile:build
+        run: cd ./deal/ && mvn -B clean verify
 
       - name: Build dossier with Maven
-        run: cd ./dossier/ && mvn -B clean package dockerfile:build
+        run: cd ./dossier/ && mvn -B clean verify
 
       - name: Build gateway with Maven
-        run: cd ./gateway/ && mvn -B clean package dockerfile:build
+        run: cd ./gateway/ && mvn -B clean verify
 
       - name: Build statement with Maven
-        run: cd ./statement/ && mvn -B clean package dockerfile:build
+        run: cd ./statement/ && mvn -B clean verify
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
