@@ -25,7 +25,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <modelmapper.version>3.2.0</modelmapper.version>
         <hypersistence.version>3.7.6</hypersistence.version>
-
+        <sonar.organization>alekseipetrovj</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencies>
