@@ -19,6 +19,8 @@
 		<docker.image.prefix>petrov</docker.image.prefix>
 		<dockerfile-maven-plugin.version>1.4.13</dockerfile-maven-plugin.version>
 		<java.version>11</java.version>
+		<sonar.organization>alekseipetrovj</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 
 	<modules>
