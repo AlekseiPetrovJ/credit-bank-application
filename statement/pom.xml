@@ -19,6 +19,8 @@
         <docker.image.prefix>petrov</docker.image.prefix>
         <dockerfile-maven-plugin.version>1.4.13</dockerfile-maven-plugin.version>
         <springdoc-openapi.version>1.6.15</springdoc-openapi.version>
+        <sonar.organization>alekseipetrovj</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencies>
