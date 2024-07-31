@@ -1,5 +1,6 @@
 [![credit-bank-application with Maven](https://github.com/AlekseiPetrovJ/credit-bank-application/actions/workflows/maven.yml/badge.svg)](https://github.com/AlekseiPetrovJ/credit-bank-application/actions/workflows/maven.yml)
 [![codecov](https://codecov.io/github/AlekseiPetrovJ/credit-bank-application/graph/badge.svg?token=WT9E6AMI6O)](https://codecov.io/github/AlekseiPetrovJ/credit-bank-application)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AlekseiPetrovJ_credit-bank-application&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=AlekseiPetrovJ_credit-bank-application)
 # Приложение "Кредитный банк"
 
 Бэкенд-приложение с микросервисной архитектурой - прототип небольшого банка с применением технологий и инструментов:
