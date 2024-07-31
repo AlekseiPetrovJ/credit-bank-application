@@ -51,21 +51,21 @@ public class DealController {
 
     @PostMapping("/offer/select")
     @ResponseStatus(code = HttpStatus.OK)
-    public ResponseEntity selectOffer(@RequestBody LoanOfferDto loanOfferDto) {
+    public ResponseEntity<?> selectOffer(@RequestBody LoanOfferDto loanOfferDto) {
         log.info("POST request {} path /offer/select", loanOfferDto);
         try {
             dealService.selectOffer(loanOfferDto);
             log.info("POST response to path {} was Ok", "/offer/select");
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (StatementNotFoundException e) {
             log.info("POST response to path {} was NOT_FOUND", "/offer/select");
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/calculate/{statementId}")
     @ResponseStatus(code = HttpStatus.OK)
-    public ResponseEntity setScoring(@PathVariable("statementId") UUID uuid,
+    public ResponseEntity<?> setScoring(@PathVariable("statementId") UUID uuid,
                                               @RequestBody @Valid FinishRegistrationRequestDto finishRequest) {
         log.info("POST request {} to path /calculate/{}", finishRequest, uuid);
 
@@ -81,53 +81,53 @@ public class DealController {
                 dealService.saveCredit(uuid, response.getBody());
                 log.info("POST request {} to path /calculate/{} returned OK", finishRequest, uuid);
 
-                return new ResponseEntity(HttpStatus.OK);
+                return new ResponseEntity<>(HttpStatus.OK);
             } else {
                 log.error("Get some error from other MC calculator/calc");
-                return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch (StatementNotFoundException e) {
             log.info("POST response to path /calculate/{} was NOT_FOUND", uuid);
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/document/{statementId}/send")
     @ResponseStatus(code = HttpStatus.OK)
-    public ResponseEntity sendDocument(@PathVariable("statementId") UUID uuid) {
+    public ResponseEntity<?> sendDocument(@PathVariable("statementId") UUID uuid) {
         log.info("POST response to path /document/{}/send", uuid);
 
         try {
             dealService.sendDocument(uuid);
             log.info("POST response to path /document/{}/send returned OK", uuid);
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (StatementNotFoundException e) {
             log.error("POST response to path /document/{}/send was NOT_FOUND", uuid);
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/document/{statementId}/sign")
     @ResponseStatus(code = HttpStatus.OK)
-    public ResponseEntity signDocument(@PathVariable("statementId") UUID uuid) {
+    public ResponseEntity<?> signDocument(@PathVariable("statementId") UUID uuid) {
         try {
             dealService.signDocument(uuid);
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (StatementNotFoundException e) {
             log.error("POST response to path /document/{}/sign was NOT_FOUND", uuid);
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/document/{statementId}/code")
     @ResponseStatus(code = HttpStatus.OK)
-    public ResponseEntity codeDocument(@PathVariable("statementId") UUID uuid) {
+    public ResponseEntity<?> codeDocument(@PathVariable("statementId") UUID uuid) {
         try {
             dealService.codeDocument(uuid);
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (StatementNotFoundException e) {
             log.error("POST response to path /document/{}/code was NOT_FOUND", uuid);
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
