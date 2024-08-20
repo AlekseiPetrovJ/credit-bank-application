@@ -5,8 +5,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix="dossier")
+@ConfigurationProperties(prefix="deal")
 @Data
 public class CommonProps {
-    private String dealUrl = "http://deal:8080";
+    private String calculatorUrl = "http://calculator:8080";
 }

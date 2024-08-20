@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.petrov.DealApplicationTest;
+import ru.petrov.config.CommonProps;
 import ru.petrov.dto.LoanOfferDto;
 import ru.petrov.dto.LoanStatementRequestDto;
 import ru.petrov.models.Statement;
@@ -32,6 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class DealControllerTest extends DealApplicationTest {
     @MockBean
     RestUtil restUtil;
+    @MockBean
+    CommonProps commonProps;
     @MockBean
     DealService dealService;
 

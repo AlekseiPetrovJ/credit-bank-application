@@ -1,8 +1,15 @@
 spring:
+  profiles:
+    active: "development"
+---
+spring:
+  config:
+    activate:
+      on-profile: "development"
   application:
     name: calculator
 server:
-  port: 8084
+  port: 8080
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

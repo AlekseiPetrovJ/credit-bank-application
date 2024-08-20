@@ -8,6 +8,6 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix="gateway")
 @Data
 public class CommonProps {
-    private String dealUrl = "http://127.0.0.1:8081";
-    private String statementUrl = "http://127.0.0.1:8082";
+    private String dealUrl = "http://deal:8080";
+    private String statementUrl = "http://statement:8080";
 }

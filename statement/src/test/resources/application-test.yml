@@ -9,6 +9,6 @@ spring:
   application:
     name: statement
 server:
-  port: 8082
+  port: 8080
   statement:
-    dealUrl: http://127.0.0.1:8081
+    dealUrl: http://deal:8080

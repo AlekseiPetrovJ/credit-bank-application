@@ -6,48 +6,47 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import ru.petrov.DealApplicationTest;
 import ru.petrov.dto.CreditDto;
-import ru.petrov.dto.EmailMessageDto;
 import ru.petrov.dto.LoanOfferDto;
 import ru.petrov.dto.LoanStatementRequestDto;
 import ru.petrov.models.Client;
 import ru.petrov.models.Statement;
+import ru.petrov.repositories.ClientRepository;
 import ru.petrov.repositories.StatementRepository;
 import ru.petrov.util.exceptions.StatementNotFoundException;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@ExtendWith(MockitoExtension.class)
 @RequiredArgsConstructor
 class DealServiceTest extends DealApplicationTest {
-    @Autowired
+    @MockBean
     private StatementRepository statementRepository;
     @Autowired
     private DealService dealService;
     @Autowired
     private ModelMapper mapper;
 
-    @Mock
+    @MockBean
+    private ClientRepository clientRepository;
+
+    @MockBean
     private MessagingService messagingService;
-    KafkaTemplate<String, EmailMessageDto> kafkaTemplate = Mockito.mock(KafkaTemplate.class);
 
     private Client client;
     private Statement statement;
@@ -76,6 +75,8 @@ class DealServiceTest extends DealApplicationTest {
     @Test
     @DisplayName("Проверка успешного добавления клиента")
     public void testSaveClient() {
+        when(clientRepository.save(any(Client.class)))
+                .thenReturn(client);
         Client savedClient = dealService.saveClient(client);
         assertEquals(client, savedClient);
     }
@@ -83,57 +84,25 @@ class DealServiceTest extends DealApplicationTest {
     @Test
     @DisplayName("Проверка добавления Statement")
     public void testSaveStatement() {
-
+        when(statementRepository.save(any(Statement.class))).thenReturn(statement);
         Statement savedStatement = dealService.saveStatement(loanStatementReqDto);
-        assertAll("Проверка сохраненного Statement и поиска клиента по Statement",
-                () -> assertTrue(Duration.between(savedStatement.getCreationDate(), LocalDateTime.now()).toSeconds() < 3),
-                () -> assertThat(statement).usingRecursiveComparison().
-                        ignoringFields("statementId", "creationDate",
-                                "client.clientId", "client.employment", "client.maritalStatus").isEqualTo(savedStatement),
-                () -> assertNotNull(dealService.getClientByStatementId(savedStatement.getStatementId()))
-        );
+        assertEquals(statement, savedStatement);
     }
 
-    //Мок emailMessagingService и/или kafkaTemplate не срабатывает. Далее ошибка таймайта Кафки. Победить не смог
-//    @Test
-//    @DisplayName("Проверка выбора предложения")
-//    public void testSelectOffer() {
-//        Mockito.doNothing().when(emailMessagingService).send(any());
-//        SettableListenableFuture future = new SettableListenableFuture();
-//        future.set(null);
-//        Mockito.when(kafkaTemplate.send(Mockito.anyString(), Mockito.any(EmailMessageDto.class)))
-//                .thenReturn(future);
-//        Statement savedStatement = dealService.saveStatement(loanStatementReqDto);
-//        loanOfferDto.setStatementId(savedStatement.getStatementId());
-//        LoanOfferDto selectedOffer = dealService.selectOffer(loanOfferDto);
-//        LoanOffer actualOffer = statementRepository.findById(savedStatement.getStatementId()).orElse(null).getAppliedOffer();
-//        assertEquals(loanOfferDto, mapper.map(actualOffer, LoanOfferDto.class));
-//    }
+    @Test
+    @DisplayName("Проверка выбора предложения")
+    public void testSelectOffer() {
+        Mockito.doNothing().when(messagingService).send(any());
+        when(statementRepository.findById(any()))
+                .thenReturn(Optional.of(statement));
+        when(statementRepository.save(any(Statement.class))).thenReturn(statement);
 
-    //Мок emailMessagingService и/или kafkaTemplate не срабатывает. Далее ошибка таймайта Кафки. Победить не смог
-//
-//    @Test
-//    @DisplayName("Проверка сохранения кредита")
-//    public void testSaveCredit() {
-//        Mockito.doNothing().when(emailMessagingService).send(any());
-//        dealService.saveClient(client);
-//        Credit credit = new Credit();
-//        credit.setCreditStatus(CreditStatus.CALCULATED);
-//        Statement savedStatement = statementRepository.save(this.statement);
-//
-//        dealService.saveCredit(savedStatement.getStatementId(), mapper.map(credit, CreditDto.class));
-//
-//        Credit savedCredit = statementRepository.findById(savedStatement.getStatementId()).get().getCredit();
-//        Statement updatedStatement = dealService.getStatementById(savedStatement.getStatementId());
-//        assertAll(
-//                () -> assertNotNull(savedCredit),
-//                () -> assertEquals(CreditStatus.CALCULATED, savedCredit.getCreditStatus()),
-//                () -> assertNotNull(updatedStatement),
-//                () -> assertThat(savedCredit).usingRecursiveComparison().isEqualTo(updatedStatement.getCredit()),
-//                () -> assertEquals(ApplicationStatus.DOCUMENT_CREATED, updatedStatement.getStatus()),
-//                () -> assertFalse(updatedStatement.getStatusHistory().isEmpty())
-//        );
-//    }
+        LoanOfferDto selectedOffer = dealService.selectOffer(loanOfferDto);
+        assertAll("Проверка выбора предложения и отправки сообщения",
+                () -> assertEquals(loanOfferDto, selectedOffer),
+                () -> verify(messagingService).send(any())
+        );
+    }
 
     @Test
     @DisplayName("Попытка сохранения кредита по отсутствующему Statement")
@@ -144,4 +113,33 @@ class DealServiceTest extends DealApplicationTest {
         assertThrows(StatementNotFoundException.class, () -> dealService.saveCredit(uuid, credit));
     }
 
+    @Test
+    @DisplayName("Проверка отправки документов")
+    public void testSendDocument() {
+        Mockito.doNothing().when(messagingService).send(any());
+        when(statementRepository.findById(any()))
+                .thenReturn(Optional.of(statement));
+        dealService.sendDocument(UUID.randomUUID());
+        verify(messagingService).send(any());
+    }
+
+    @Test
+    @DisplayName("Проверка подписания документа")
+    public void testSignDocument() {
+        Mockito.doNothing().when(messagingService).send(any());
+        when(statementRepository.findById(any()))
+                .thenReturn(Optional.of(statement));
+        dealService.signDocument(UUID.randomUUID());
+        verify(messagingService).send(any());
+    }
+
+    @Test
+    @DisplayName("Проверка выдачи кредита")
+    public void testCodeDocument() {
+        Mockito.doNothing().when(messagingService).send(any());
+        when(statementRepository.findById(any()))
+                .thenReturn(Optional.of(statement));
+        dealService.codeDocument(UUID.randomUUID());
+        verify(messagingService).send(any());
+    }
 }

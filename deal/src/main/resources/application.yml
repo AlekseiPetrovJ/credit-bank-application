@@ -6,9 +6,11 @@ spring:
   config:
     activate:
       on-profile: "development"
+  application:
+    name: deal
   kafka:
     bootstrap-servers:
-      - localhost:9092
+      - kafka:9092
     producer:
       keySerializer: org.springframework.kafka.support.serializer.JsonSerializer
       valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -23,14 +25,14 @@ spring:
     show-sql: true
   datasource:
     driver: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5433/deal
+    url: jdbc:postgresql://postgres:5432/deal
     username: deal
     password: dealdeal
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/changelog.xml
 server:
-  port: 8081
+  port: 8080
 springdoc:
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
@@ -38,7 +40,8 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /api-docs
-
+deal:
+  calculatorUrl: http://calculator:8080
 ---
 spring:
   config:

@@ -21,7 +21,7 @@ spring:
       ssl.trust: smtp.gmail.com
   kafka:
     bootstrap-servers:
-    - localhost:9092
+    - kafka:9092
     consumer:
       group-id: dossier
       auto-offset-reset: earliest
@@ -31,4 +31,4 @@ spring:
         spring.json.trusted.packages: '*'
 
 dossier:
-  dealUrl: http://127.0.0.1:8081
+  dealUrl: http://deal:8080
