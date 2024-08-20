@@ -1,0 +1,41 @@
+spring:
+  profiles:
+    active: "development"
+---
+spring:
+  config:
+    activate:
+      on-profile: "development"
+  application:
+    name: calculator
+server:
+  port: 8080
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  # /api-docs endpoint custom path
+  api-docs:
+    path: /api-docs
+calculator:
+  rates:
+    #    Ставка по кредиту — это годовой процент
+    basicYearRate: 16.5
+    #    Процент для расчета цены страховки
+    insuranceRate: 2.5
+    #    Процент на который уменьшается размер базовой ставки при условии страхования
+    insuranceFactor: 3.0
+    #    Процент на который уменьшается размер базовой ставки для зарплатных клиентов
+    salaryClientFactor: 1.0
+  rounding:
+    #    Режим округления для BigDecimal.
+    #  UP
+    #DOWN
+    #CEILING
+    #FLOOR
+    #HALF_UP
+    #HALF_DOWN
+    #HALF_EVEN - default
+    #UNNECESSARY
+    roundingMode: HALF_EVEN
+#    Количество десятичных знаков при округлении. 10 - default
+    roundingScale: 12

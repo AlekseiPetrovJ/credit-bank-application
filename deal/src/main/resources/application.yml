@@ -1,0 +1,54 @@
+spring:
+  profiles:
+    active: "development"
+---
+spring:
+  config:
+    activate:
+      on-profile: "development"
+  application:
+    name: deal
+  kafka:
+    bootstrap-servers:
+      - kafka:9092
+    producer:
+      keySerializer: org.springframework.kafka.support.serializer.JsonSerializer
+      valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    #      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
+        format_sql: true
+    show-sql: true
+  datasource:
+    driver: org.postgresql.Driver
+    url: jdbc:postgresql://postgres:5432/deal
+    username: deal
+    password: dealdeal
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/changelog.xml
+server:
+  port: 8080
+springdoc:
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
+deal:
+  calculatorUrl: http://calculator:8080
+---
+spring:
+  config:
+    activate:
+      on-profile: "production"
+
+
+
+
+

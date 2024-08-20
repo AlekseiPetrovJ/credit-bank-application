@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    active: "test"
+---
+spring:
+  config:
+    activate:
+      on-profile: "test"
+  application:
+    name: statement
+server:
+  port: 8080
+  statement:
+    dealUrl: http://deal:8080

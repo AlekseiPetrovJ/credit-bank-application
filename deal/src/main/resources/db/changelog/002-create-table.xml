@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd"
+        logicalFilePath="db/changelog.xml">
+
+    <changeSet id="create-client-table" author="your_username">
+        <createTable tableName="client" schemaName="public">
+            <column name="client_id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="account_number" type="varchar(255)"/>
+            <column name="birth_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dependent_amount" type="integer"/>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employment" type="jsonb"/>
+            <column name="first_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gender" type="varchar(255)"/>
+            <column name="last_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="marital_status" type="varchar(255)"/>
+            <column name="middle_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="passport" type="jsonb"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="create-credit-table" author="your_username">
+        <createTable tableName="credit" schemaName="public">
+            <column name="credit_id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="credit_status" type="varchar(255)"/>
+            <column name="insurance_enabled" type="boolean"/>
+            <column name="monthly_payment" type="numeric(19,2)"/>
+            <column name="payment_schedule" type="jsonb"/>
+            <column name="psk" type="numeric(19,2)"/>
+            <column name="rate" type="numeric(19,2)"/>
+            <column name="salary_client" type="boolean"/>
+            <column name="term" type="integer"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="create-statement-table" author="your_username">
+    <createTable tableName="statement">
+        <column name="statement_id" type="uuid">
+            <constraints primaryKey="true" nullable="false"/>
+        </column>
+        <column name="applied_offer" type="jsonb"/>
+        <column name="creation_date" type="timestamp"/>
+        <column name="ses_code" type="varchar(255)"/>
+        <column name="sign_date" type="timestamp"/>
+        <column name="status" type="varchar(255)">
+            <constraints nullable="true"/>
+        </column>
+        <column name="status_history" type="jsonb"/>
+        <column name="client_id" type="uuid">
+            <constraints nullable="false" unique="true"/>
+        </column>
+        <column name="credit_id" type="uuid"/>
+    </createTable>
+
+    <addUniqueConstraint tableName="statement" columnNames="client_id" constraintName="uk_9tqewygqikprxtgivlaulwa4a"/>
+
+    <addForeignKeyConstraint constraintName="fkdmspwvw0ux234vtferxbd1q9u"
+                             baseTableName="statement" baseColumnNames="client_id"
+                             referencedTableName="client" referencedColumnNames="client_id"/>
+
+    <addForeignKeyConstraint constraintName="fkdrij5d3mdeb1hp56154m7c2mw"
+                             baseTableName="statement" baseColumnNames="credit_id"
+                             referencedTableName="credit" referencedColumnNames="credit_id"/>
+</changeSet>
+
+        </databaseChangeLog>
